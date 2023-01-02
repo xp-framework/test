@@ -1,5 +1,5 @@
-Testing
-=======
+Tests
+=====
 
 [![Build status on GitHub](https://github.com/xp-framework/test/workflows/Tests/badge.svg)](https://github.com/xp-framework/test/actions)
 [![XP Framework Module](https://raw.githubusercontent.com/xp-framework/web/master/static/xp-framework-badge.png)](https://github.com/xp-framework/core)
@@ -8,11 +8,11 @@ Testing
 [![Supports PHP 8.0+](https://raw.githubusercontent.com/xp-framework/web/master/static/php-8_0plus.svg)](http://php.net/)
 [![Latest Stable Version](https://poser.pugx.org/xp-framework/test/version.png)](https://packagist.org/packages/xp-framework/test)
 
-Testing for the XP Framework
+Unit and integration tests for the XP Framework
 
 Writing a test
 --------------
-Tests reside inside a class and are annotated with the `@test` attribute.
+Tests reside inside a class and are annotated with the `Test` attribute.
 
 ```php
 use test\{Assert, Test};
