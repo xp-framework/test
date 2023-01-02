@@ -30,7 +30,7 @@ To run the test, use the `test` subcommand:
 
 ```sh
 $ xp test CalculatorTest.class.php
->  PASS  CalculatorTest
+> [PASS] CalculatorTest
   ✓ addition
 
 Tests:       1 succeeded, 0 skipped, 0 failed
