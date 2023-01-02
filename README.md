@@ -38,6 +38,17 @@ Memory used: 1556.36 kB (1610.49 kB peak)
 Time taken:  0.001 seconds
 ```
 
+Assertions
+----------
+The following shorthand methods exist on the `Assert` class:
+
+* `equals(mixed $expected, mixed $actual)` - check two values are equal. Uses the `util.Objects::equal()` method internally, which allows overwriting object comparison.
+* `notEquals(mixed $expected, mixed $actual)` - opposite of above
+* `true(mixed $actual)` - check a given value is equal to the *true* boolean
+* `false(mixed $actual)`  - check a given value is equal to the *false* boolean
+* `null(mixed $actual)` - check a given value is *null*
+* `instance(string|lang.Type $expected, mixed $actual)` - check a given value is an instance of the given type.
+
 Value-driven tests
 ------------------
 To keep test code short and concise, tests may be value-driven. Values can be provided either directly inline:
