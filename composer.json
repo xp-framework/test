@@ -1,0 +1,17 @@
+{
+  "name" : "xp-framework/test",
+  "type" : "library",
+  "homepage" : "http://xp-framework.net/",
+  "license" : "BSD-3-Clause",
+  "description" : "Testing for the XP Framework",
+  "keywords": ["module", "xp"],
+  "require" : {
+    "xp-framework/core": "^11.0",
+    "xp-framework/reflection": "^2.0",
+    "php" : ">=7.0.0"
+  },
+  "bin": ["bin/xp.xp-framework.unittest.test"],
+  "autoload" : {
+    "files" : ["src/main/php/autoload.php"]
+  }
+}
