@@ -21,7 +21,7 @@ class CalculatorTest {
 
   #[Test]
   public function addition() {
-    Assert::equals(2, 1 + 1);
+    Assert::equals(2, (new Calculator())->add(1, 1));
   }
 }
 ```
@@ -36,4 +36,40 @@ $ xp test CalculatorTest.class.php
 Tests:       1 succeeded, 0 skipped, 0 failed
 Memory used: 1556.36 kB (1610.49 kB peak)
 Time taken:  0.001 seconds
+```
+
+Value-driven tests
+------------------
+To keep test code short and concise, tests may be value-driven. Values can be provided either directly inline:
+
+```php
+use test\{Assert, Test, Values};
+
+class CalculatorTest {
+
+  #[Test, Values([0, 0], [1, 1], [-1, 1])]
+  public function addition($a, $b) {
+    Assert::equals($a + $b, (new Calculator())->add($a, $b));
+  }
+}
+```
+
+...or by referencing a provider method as follows:
+
+```php
+use test\{Assert, Test, Values};
+
+class CalculatorTest {
+
+  private function provider(): iterable {
+    yield [0, 0];
+    yield [1, 1];
+    yield [-1, 1];
+  }
+
+  #[Test, Values('provider')]
+  public function addition($a, $b) {
+    Assert::equals($a + $b, (new Calculator())->add($a, $b));
+  }
+}
 ```
