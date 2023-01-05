@@ -84,3 +84,7 @@ class CalculatorTest {
   }
 }
 ```
+
+See also
+--------
+* [RFC #344: New testing library](https://github.com/xp-framework/rfc/issues/344)
