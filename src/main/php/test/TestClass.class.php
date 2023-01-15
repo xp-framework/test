@@ -21,8 +21,8 @@ class TestClass {
 
   /** @return iterable */
   public function prerequisites() {
-    if ($verify= $this->type->annotation(Runtime::class)) {
-      yield from $verify->newInstance()->assertions();
+    foreach ($this->type->annotations()->all(Prerequisite::class) as $prerequisite) {
+      yield from $prerequisite->newInstance()->assertions();
     }
   }
 
