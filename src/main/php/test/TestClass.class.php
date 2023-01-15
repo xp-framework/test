@@ -2,6 +2,7 @@
 
 use lang\reflection\Type;
 use lang\{Reflection, XPClass, Throwable};
+use test\verify\Runtime;
 
 class TestClass {
   private $type;
@@ -19,6 +20,13 @@ class TestClass {
   public function name() { return $this->type->name(); }
 
   /** @return iterable */
+  public function prerequisites() {
+    foreach ($this->type->annotations()->all(Prerequisite::class) as $prerequisite) {
+      yield from $prerequisite->newInstance()->assertions($this->type->literal());
+    }
+  }
+
+  /** @return iterable */
   public function tests() {
     $instance= $this->type->newInstance();
 
@@ -33,10 +41,14 @@ class TestClass {
         $after[]= $method;
       } else if ($annotations->provides(Test::class) || $annotations->provides('unittest.Test')) {
 
-        // Check @Ignore
-        if ($ignore= $annotations->type(Ignore::class) ?? $annotations->type('unittest.Ignore')) {
-          $cases[]= new SkipTest($method->name(), $ignore->argument(0));
-          continue;
+        // Check prerequisites, if any fail - mark test as skipped and continue with next
+        foreach ($annotations->all(Prerequisite::class) as $prerequisite) {
+          foreach ($prerequisite->newInstance()->assertions($this->type->literal()) as $assertion) {
+            if (!$assertion->verify()) {
+              $cases[]= new SkipTest($method->name(), $assertion->requirement(false));
+              continue 3;
+            }
+          }
         }
 
         $case= new RunTest($method->name(), $method->closure($instance));

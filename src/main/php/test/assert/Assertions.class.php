@@ -1,6 +1,7 @@
 <?php namespace test\assert;
 
 use lang\Type;
+use test\AssertionFailed;
 
 class Assertions {
   public static $TRUE, $FALSE, $NULL;
@@ -40,7 +41,7 @@ class Assertions {
    * @return self
    */
   public function isEqualTo($expected) {
-    return $this->is(new Equal($expected));
+    return $this->is(new Equals($expected));
   }
 
   /**
