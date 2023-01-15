@@ -36,9 +36,9 @@ class RequiredVersion extends Condition {
       return sprintf(
         '%d.%d.%d%s',
         $matches[1],
-        isset($matches[3]) ? $matches[3] : 0,
-        isset($matches[5]) ? $matches[5] : 0,
-        isset($matches[6]) ? $matches[6] : ''
+        $matches[3] ?? 0,
+        $matches[5] ?? 0,
+        $matches[6] ?? ''
       );
     }
     throw new FormatException('Cannot normalize "'.$version.'"');
