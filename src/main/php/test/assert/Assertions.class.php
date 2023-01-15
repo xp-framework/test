@@ -41,7 +41,7 @@ class Assertions {
    * @return self
    */
   public function isEqualTo($expected) {
-    return $this->is(new Equal($expected));
+    return $this->is(new Equals($expected));
   }
 
   /**
