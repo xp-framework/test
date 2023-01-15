@@ -22,7 +22,7 @@ class TestClass {
   /** @return iterable */
   public function prerequisites() {
     if ($verify= $this->type->annotation(Runtime::class)) {
-      yield from $verify->newInstance()->prerequisites();
+      yield from $verify->newInstance()->assertions();
     }
   }
 
@@ -41,18 +41,12 @@ class TestClass {
         $after[]= $method;
       } else if ($annotations->provides(Test::class) || $annotations->provides('unittest.Test')) {
 
-        // Check @Ignore
-        if ($ignore= $annotations->type(Ignore::class) ?? $annotations->type('unittest.Ignore')) {
-          $cases[]= new SkipTest($method->name(), $ignore->argument(0));
-          continue;
-        }
-
-        // Check prerequisites
-        if ($verify= $annotations->type(Runtime::class)) {
-          foreach ($verify->newInstance()->prerequisites() as $prerequisite) {
-            if (!$prerequisite->verify()) {
-              $cases[]= new SkipTest($method->name(), $prerequisite->requirement(false));
-              continue 2;
+        // Check prerequisites, if any fail - mark test as skipped and continue with next
+        foreach ($annotations->all(Prerequisite::class) as $prerequisite) {
+          foreach ($prerequisite->newInstance()->assertions() as $assertion) {
+            if (!$assertion->verify()) {
+              $cases[]= new SkipTest($method->name(), $assertion->requirement(false));
+              continue 3;
             }
           }
         }

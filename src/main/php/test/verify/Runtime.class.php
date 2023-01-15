@@ -1,8 +1,9 @@
 <?php namespace test\verify;
 
+use test\Prerequisite;
 use test\assert\{Assertion, Matches, RequiredVersion};
 
-class Runtime {
+class Runtime implements Prerequisite {
   private $os, $php;
 
   public function __construct($os= null, $php= null) {
@@ -15,7 +16,7 @@ class Runtime {
    *
    * @return iterable
    */
-  public function prerequisites() {
+  public function assertions() {
     null === $this->os || yield new Assertion(PHP_OS, new Matches('/'.$this->os.'/i'));
     null === $this->php || yield new Assertion(PHP_VERSION, new RequiredVersion('PHP', $this->php));
   }
