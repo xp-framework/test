@@ -1,6 +1,6 @@
 <?php namespace test\assert;
 
-class Truthy extends Condition {
+class Verify extends Condition {
   private $description;
 
   public function __construct($description= null) {
@@ -13,9 +13,9 @@ class Truthy extends Condition {
 
   public function describe($value, $positive) {
     return sprintf(
-      '%s %s', 
-      $this->description ?? self::stringOf($value),
-      $positive ? 'is truthy' : 'is not truthy'
+      '%s %s',
+      $positive ? 'verified' : 'failed verifying',
+      $this->description ?? self::stringOf($value)
     );
   }
 }

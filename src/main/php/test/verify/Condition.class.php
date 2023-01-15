@@ -2,7 +2,7 @@
 
 use Closure;
 use test\Prerequisite;
-use test\assert\{Assertion, Truthy};
+use test\assert\{Assertion, Verify};
 
 /**
  * Generic verification via expressions or `assert`.
@@ -30,6 +30,6 @@ class Condition implements Prerequisite {
       $result= $this->expression instanceof Closure ? ($this->expression)() : $this->expression;
     }
 
-    yield new Assertion($result, new Truthy($this->assert));
+    yield new Assertion($result, new Verify($this->assert));
   }
 }
