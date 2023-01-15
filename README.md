@@ -85,6 +85,29 @@ class CalculatorTest {
 }
 ```
 
+Prerequisites
+-------------
+Test classes and methods may have prerequisites, which must successfully verify in order for the tests to run:
+
+```php
+use test\verify\Runtime;
+use test\{Assert, Test};
+
+#[Runtime(extensions: ['bcmath'])]
+class CalculatorTest {
+
+  #[Test]
+  public function addition() {
+    Assert::equals(3, (int)bcadd(1, 2));
+  }
+}
+```
+
+The following verifications are included:
+
+* `Runtime(os: '^WIN', php: '^8.0', extensions: ['bcmath'])` - runtime verifications.
+* `Condition(assert: 'function_exists("random_int")')` - verify given expression in the context of the test class.
+
 See also
 --------
 * [RFC #344: New testing library](https://github.com/xp-framework/rfc/issues/344)
