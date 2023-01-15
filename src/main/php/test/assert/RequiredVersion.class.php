@@ -18,17 +18,37 @@ use lang\FormatException;
 class RequiredVersion extends Condition {
   const PATTERN= '/^([0-9]+)(\.([0-9]+))(\.([0-9]+))?(.+)?$/';
 
-  protected $component, $range;
+  protected $component, $comparison;
 
   /**
    * Creates a new required version condition
    *
    * @param  string $component
    * @param  string $range
+   * @throws FormatException if range is not parseable
    */
   public function __construct($component, $range) {
     $this->component= $component;
-    $this->range= $range;
+
+    if ('^' === $range[0]) {
+      $next= '0' === $range[1]
+        ? '0.'.(($range[3] ?? 0) + 1).substr($range, 4)
+        : ($range[1] + 1).substr($range, 2)
+      ;
+      $this->comparison= [[$this->normalize($range, 1), '>='], [$this->normalize($next), '<']];
+    } else if ('>' === $range[0]) {
+      $this->comparison= ['=' === $range[1]
+        ? [$this->normalize($range, 2), '>=']
+        : [$this->normalize($range, 1), '>']
+      ];
+    } else if ('<' === $range[0]) {
+      $this->comparison= ['=' === $range[1]
+        ? [$this->normalize($range, 2), '<=']
+        : [$this->normalize($range, 1), '<']
+      ];
+    } else {
+      $this->comparison= [[$this->normalize($range), '=']];
+    }
   }
 
   private function normalize($version, $offset= 0) {
@@ -45,29 +65,10 @@ class RequiredVersion extends Condition {
   }
 
   public function matches($value) {
-    if ('^' === $this->range[0]) {
-      $next= '0' === $this->range[1]
-        ? '0.'.(($this->range[3] ?? 0) + 1).substr($this->range, 4)
-        : ($this->range[1] + 1).substr($this->range, 2)
-      ;
-      return (
-        version_compare($value, $this->normalize($this->range, 1), '>=') &&
-        version_compare($value, $this->normalize($next), '<')
-      );
-    } else if ('>' === $this->range[0]) {
-      return '=' === $this->range[1]
-        ? version_compare($value, $this->normalize($this->range, 2), '>=')
-        : version_compare($value, $this->normalize($this->range, 1), '>')
-      ;
-    } else if ('<' === $this->range[0]) {
-      return '=' === $this->range[1]
-        ? version_compare($value, $this->normalize($this->range, 2), '<=')
-        : version_compare($value, $this->normalize($this->range, 1), '<')
-      ;
+    foreach ($this->comparison as $compare) {
+      if (!version_compare($value, ...$compare)) return false;
     }
-
-    // Otherwise, perform exact match
-    return version_compare($value, $this->normalize($this->range), '=');
+    return true;
   }
 
   public function describe($value, $positive) {
