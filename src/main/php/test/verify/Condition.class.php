@@ -22,10 +22,16 @@ class Condition implements Prerequisite {
     $this->assert= $assert;
   }
 
-  /** @return iterable */
-  public function assertions() {
+  /**
+   * Return assertions for a given context type
+   *
+   * @param  ?string $context
+   * @return iterable
+   */
+  public function assertions($context) {
     if ($this->assert) {
-      $result= eval("return assert({$this->assert});");
+      $f= eval("return function() { return assert({$this->assert}); };");
+      $result= $f->bindTo(null, $context)->__invoke();
     } else {
       $result= $this->expression instanceof Closure ? ($this->expression)() : $this->expression;
     }

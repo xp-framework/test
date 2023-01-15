@@ -22,9 +22,10 @@ class Runtime implements Prerequisite {
   /**
    * Yields assertions to verify runtime OS / PHP
    *
+   * @param  ?string $context
    * @return iterable
    */
-  public function assertions() {
+  public function assertions($context) {
     null === $this->os || yield new Assertion(PHP_OS, new Matches('/'.$this->os.'/i'));
     null === $this->php || yield new Assertion(PHP_VERSION, new RequiredVersion('PHP', $this->php));
 

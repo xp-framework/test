@@ -22,7 +22,7 @@ class TestClass {
   /** @return iterable */
   public function prerequisites() {
     foreach ($this->type->annotations()->all(Prerequisite::class) as $prerequisite) {
-      yield from $prerequisite->newInstance()->assertions();
+      yield from $prerequisite->newInstance()->assertions($this->type->literal());
     }
   }
 
@@ -43,7 +43,7 @@ class TestClass {
 
         // Check prerequisites, if any fail - mark test as skipped and continue with next
         foreach ($annotations->all(Prerequisite::class) as $prerequisite) {
-          foreach ($prerequisite->newInstance()->assertions() as $assertion) {
+          foreach ($prerequisite->newInstance()->assertions($this->type->literal()) as $assertion) {
             if (!$assertion->verify()) {
               $cases[]= new SkipTest($method->name(), $assertion->requirement(false));
               continue 3;
