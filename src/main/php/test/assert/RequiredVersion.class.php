@@ -1,6 +1,7 @@
 <?php namespace test\assert;
 
 use lang\FormatException;
+use util\Objects;
 
 /**
  * Test component for a given version
@@ -33,7 +34,7 @@ class RequiredVersion extends Condition {
     if ('^' === $range[0]) {
       $next= '0' === $range[1]
         ? '0.'.(($range[3] ?? 0) + 1).substr($range, 4)
-        : ($range[1] + 1).substr($range, 2)
+        : ($range[1] + 1).'.0.0'
       ;
       $this->comparison= [[$this->normalize($range, 1), '>='], [$this->normalize($next), '<']];
     } else if ('>' === $range[0]) {
@@ -66,7 +67,7 @@ class RequiredVersion extends Condition {
 
   public function matches($value) {
     foreach ($this->comparison as $compare) {
-      if (!version_compare($value, ...$compare)) return false;
+      if (!version_compare($this->normalize($value), ...$compare)) return false;
     }
     return true;
   }
@@ -77,7 +78,7 @@ class RequiredVersion extends Condition {
       $this->component,
       self::stringOf($value),
       $positive ? 'meets version requirement' : 'does not meet version requirement',
-      $this->range
+      Objects::stringOf($this->comparison)
     );
   }
 }

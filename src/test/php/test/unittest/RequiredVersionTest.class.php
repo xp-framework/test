@@ -22,6 +22,13 @@ class RequiredVersionTest {
     Assert::equals($expected, $fixture->matches($version));
   }
 
+  #[Test, Values(['1.0', '1.0.0', '1.1', '1.2.3'])]
+  public function caret_for($version) {
+    $fixture= new RequiredVersion('Test', '^'.$version);
+    Assert::true($fixture->matches($version));
+    Assert::false($fixture->matches('2.0.0'));
+  }
+
   #[Test, Values([['1.0.0', false], ['1.0.1', true], ['1.10.3', true], ['2.0.0', true], ['0.9.1', false]])]
   public function greater_1_0($version, $expected) {
     $fixture= new RequiredVersion('Test', '>1.0');
