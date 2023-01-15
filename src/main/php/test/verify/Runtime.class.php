@@ -6,6 +6,12 @@ use test\assert\{Assertion, Matches, RequiredVersion};
 class Runtime implements Prerequisite {
   private $os, $php;
 
+  /**
+   * Runtime prerequisite
+   *
+   * @param  ?string $os Operating system name
+   * @param  ?string $php PHP version constraint
+   */
   public function __construct($os= null, $php= null) {
     $this->os= $os;
     $this->php= $php;

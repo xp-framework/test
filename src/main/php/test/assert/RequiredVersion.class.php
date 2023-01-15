@@ -1,8 +1,20 @@
 <?php namespace test\assert;
 
+/**
+ * Test component for a given version
+ *
+ * @see   https://getcomposer.org/doc/articles/versions.md
+ * @test  test.unittest.RequiredVersionTest
+ */
 class RequiredVersion extends Condition {
   protected $component, $range;
 
+  /**
+   * Creates a new required version condition
+   *
+   * @param  string $component
+   * @param  string $range
+   */
   public function __construct($component, $range) {
     $this->component= $component;
     $this->range= $range;
