@@ -1,12 +1,23 @@
 <?php namespace test\assert;
 
+use lang\FormatException;
+
 /**
  * Test component for a given version
+ *
+ * | Specifier         | Meaning |
+ * | ----------------- | ------- |
+ * | `1.0.0`, `1.0`    | Exact version match required. |
+ * | `>1.2`, `>=1.2.3` | A greater than / great than or equal to constraint. |
+ * | `<1.2`, `<=1.2.3` | A less than / less than or equal to constraint. |
+ * | `^1.2`            | The next significant release, meaning `>=1.2,<2.0`, so any 1.x version is OK. |
  *
  * @see   https://getcomposer.org/doc/articles/versions.md
  * @test  test.unittest.RequiredVersionTest
  */
 class RequiredVersion extends Condition {
+  const PATTERN= '/^([0-9]+)(\.([0-9]+))(\.([0-9]+))?(.+)?$/';
+
   protected $component, $range;
 
   /**
@@ -20,17 +31,43 @@ class RequiredVersion extends Condition {
     $this->range= $range;
   }
 
-  public function matches($value) {
-    if ('^' === $this->range[0]) {
-      return (
-        version_compare($value, substr($this->range, 1), '>=') &&
-        version_compare($value, ($this->range[1] + 1).substr($this->range, 2), '<')
+  private function normalize($version, $offset= 0) {
+    if (preg_match(self::PATTERN, $offset ? substr($version, $offset) : $version, $matches)) {
+      return sprintf(
+        '%d.%d.%d%s',
+        $matches[1],
+        isset($matches[3]) ? $matches[3] : 0,
+        isset($matches[5]) ? $matches[5] : 0,
+        isset($matches[6]) ? $matches[6] : ''
       );
     }
+    throw new FormatException('Cannot normalize "'.$version.'"');
+  }
 
-    // TODO: Other operators
+  public function matches($value) {
+    if ('^' === $this->range[0]) {
+      $next= '0' === $this->range[1]
+        ? '0.'.(($this->range[3] ?? 0) + 1).substr($this->range, 4)
+        : ($this->range[1] + 1).substr($this->range, 2)
+      ;
+      return (
+        version_compare($value, $this->normalize($this->range, 1), '>=') &&
+        version_compare($value, $this->normalize($next), '<')
+      );
+    } else if ('>' === $this->range[0]) {
+      return '=' === $this->range[1]
+        ? version_compare($value, $this->normalize($this->range, 2), '>=')
+        : version_compare($value, $this->normalize($this->range, 1), '>')
+      ;
+    } else if ('<' === $this->range[0]) {
+      return '=' === $this->range[1]
+        ? version_compare($value, $this->normalize($this->range, 2), '<=')
+        : version_compare($value, $this->normalize($this->range, 1), '<')
+      ;
+    }
 
-    return false;
+    // Otherwise, perform exact match
+    return version_compare($value, $this->normalize($this->range), '=');
   }
 
   public function describe($value, $positive) {

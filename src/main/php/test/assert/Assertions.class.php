@@ -1,6 +1,7 @@
 <?php namespace test\assert;
 
 use lang\Type;
+use test\AssertionFailed;
 
 class Assertions {
   public static $TRUE, $FALSE, $NULL;
