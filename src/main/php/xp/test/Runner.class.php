@@ -42,11 +42,12 @@ class Runner {
     static $summary= [
       'success' => "\033[42;1;37m PASS \033[0m",
       'failure' => "\033[41;1;37m FAIL \033[0m",
+      'skipped' => "\033[43;1;37m SKIP \033[0m",
     ];
     static $indicators= [
       'success' => "\033[32m✓\033[0m",
       'failure' => "\033[31m⨯\033[0m",
-      'skipped' => "\033[36m⦾\033[0m",
+      'skipped' => "\033[33m⦾\033[0m",
     ];
 
     $timer= new Timer();
@@ -69,7 +70,20 @@ class Runner {
     foreach ($tests->groups() as $group) {
       Console::writef("\r> \033[44;1;37m RUN… \033[0m \033[37m%s\033[0m", $group->name());
 
-      // Run group...
+      // Check group prerequisites
+      foreach ($group->prerequisites() as $prerequisite) {
+        if (!$prerequisite->verify()) {
+          Console::writeLinef(
+            "\r> %s \033[37m%s\033[1;32;3m // %s\033[0m\n",
+            $summary['skipped'],
+            $group->name(),
+            $prerequisite->requirement(false)
+          );
+          continue 2;
+        }
+      }
+
+      // Run tests in this group...
       $i= 0;
       $grouped= [];
       $status= 'success';
@@ -88,10 +102,11 @@ class Runner {
       Console::writeLinef("\r> %s \033[37m%s\033[0m", $summary[$status], $group->name());
       foreach ($grouped as $outcome) {
         $kind= $outcome->kind();
-        Console::writeLine('  ', $indicators[$kind], ' ', str_replace("\n", "\n    ", $outcome->test));
-
-        if ('failure' === $kind) {
-          Console::writeLine('  ', Objects::stringOf($outcome->cause, '  '));
+        Console::write('  ', $indicators[$kind], ' ', str_replace("\n", "\n    ", $outcome->test));
+        switch ($kind) {
+          case 'success': Console::writeLine(); break;
+          case 'skipped': Console::writeLine("\033[1;32;3m // Skip: ", $outcome->reason, "\033[0m"); break;
+          case 'failure': Console::writeLine("\n  ", Objects::stringOf($outcome->cause, '  ')); break;
         }
       }
       Console::writeLine();
@@ -116,6 +131,6 @@ class Runner {
       $metrics->elapsed
     );
 
-    return 'success' === $status ? 0 : 1;
+    return $metrics->count['failure'] ? 1 : 0;
   }
 }
