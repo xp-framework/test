@@ -9,6 +9,8 @@ use test\assert\{Assertion, Verify};
  * 
  * - `Condition('self::processExecutionEnabled()')`
  * - `Condition(assert: 'function_exists("bcadd")')`
+ *
+ * @test  test.unittest.ConditionTest
  */
 class Condition implements Prerequisite {
   private $assert;
