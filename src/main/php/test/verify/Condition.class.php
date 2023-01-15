@@ -5,20 +5,16 @@ use test\Prerequisite;
 use test\assert\{Assertion, Verify};
 
 /**
- * Generic verification via expressions or `assert`.
- *
- * @see   https://www.php.net/assert
+ * Generic verification via `assert`.
+ * 
+ * - `Condition('self::processExecutionEnabled()')`
+ * - `Condition(assert: 'function_exists("bcadd")')`
  */
 class Condition implements Prerequisite {
-  private $expression, $assert;
+  private $assert;
 
-  static function __static() {
-    ini_set('zend.assertions', 1);
-    ini_set('assert.exception', 0);
-  }
-
-  public function __construct($expression= null, $assert= null) {
-    $this->expression= $expression;
+  /** @param string|function(): bool $assert */
+  public function __construct($assert) {
     $this->assert= $assert;
   }
 
@@ -29,13 +25,11 @@ class Condition implements Prerequisite {
    * @return iterable
    */
   public function assertions($context) {
-    if ($this->assert) {
-      $expression= eval("return function() { return assert({$this->assert}); };");
-      $result= $expression->bindTo(null, $context)->__invoke();
-    } else if ($this->expression instanceof Closure) {
-      $result= $this->expression->bindTo(null, $context)->__invoke();
+    if ($this->assert instanceof Closure) {
+      $result= $this->assert->bindTo(null, $context)->__invoke();
     } else {
-      $result= $this->expression;
+      $f= eval("return function() { return {$this->assert}; };");
+      $result= $f->bindTo(null, $context)->__invoke();
     }
 
     yield new Assertion($result, new Verify($this->assert));
