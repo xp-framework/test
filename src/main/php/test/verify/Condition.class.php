@@ -30,10 +30,12 @@ class Condition implements Prerequisite {
    */
   public function assertions($context) {
     if ($this->assert) {
-      $f= eval("return function() { return assert({$this->assert}); };");
-      $result= $f->bindTo(null, $context)->__invoke();
+      $expression= eval("return function() { return assert({$this->assert}); };");
+      $result= $expression->bindTo(null, $context)->__invoke();
+    } else if ($this->expression instanceof Closure) {
+      $result= $this->expression->bindTo(null, $context)->__invoke();
     } else {
-      $result= $this->expression instanceof Closure ? ($this->expression)() : $this->expression;
+      $result= $this->expression;
     }
 
     yield new Assertion($result, new Verify($this->assert));
