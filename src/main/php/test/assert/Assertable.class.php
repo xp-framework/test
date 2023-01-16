@@ -1,7 +1,7 @@
 <?php namespace test\assert;
 
-use Traversable;
-use lang\Type;
+use Closure, Throwable, Traversable, ReflectionFunction;
+use lang\{Type, IllegalArgumentException};
 use test\AssertionFailed;
 
 /** @test test.unittest.AssertableTest */
@@ -41,21 +41,50 @@ class Assertable {
    * function. Works for scalars as well as arrays and any traversable
    * data structure. The given function recieves the value and returns
    * the mapped value as a new `Assertable`.
+   *
+   * @param  function(mixed): mixed|function(mixed, int|string): mixed $mapper
    */
-  public function map(callable $mapper): self {
-    if (is_array($this->value) || $this->value instanceof Traversable) {
-      $self= new self([]);
-      foreach ($this->value as $key => $element) {
-        $r= $mapper($element, $key);
-        if ($r instanceof Traversable) {
-          $self->value+= iterator_to_array($r);
-        } else {
-          $self->value[$key]= $r;
+  public function map($mapper): self {
+    try {
+      $r= new ReflectionFunction($mapper);
+      $mapper instanceof Closure || $mapper= $r->getClosure();
+    } catch (Throwable $e) {
+      throw new IllegalArgumentException($e->getMessage(), $e);
+    }
+
+    // Do not pass keys to callables with only one required parameter.
+    // This enables to use map with functions such as trim(), which
+    // would otherwise choke on the array keys.
+    if (1 === $r->getNumberOfRequiredParameters()) {
+      if (is_array($this->value) || $this->value instanceof Traversable) {
+        $self= new self([]);
+        foreach ($this->value as $key => $element) {
+          $m= $mapper($element);
+          if ($m instanceof Traversable) {
+            $self->value+= iterator_to_array($m);
+          } else {
+            $self->value[$key]= $m;
+          }
         }
+        return $self;
+      } else {
+        return new self($mapper($this->value));
       }
-      return $self;
     } else {
-      return new self($mapper($this->value, null));
+      if (is_array($this->value) || $this->value instanceof Traversable) {
+        $self= new self([]);
+        foreach ($this->value as $key => $element) {
+          $m= $mapper($element, $key);
+          if ($m instanceof Traversable) {
+            $self->value+= iterator_to_array($m);
+          } else {
+            $self->value[$key]= $m;
+          }
+        }
+        return $self;
+      } else {
+        return new self($mapper($this->value, null));
+      }
     }
   }
 

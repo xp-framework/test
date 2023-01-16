@@ -1,5 +1,6 @@
 <?php namespace test\unittest;
 
+use lang\IllegalArgumentException;
 use test\assert\Assertable;
 use test\{Assert, AssertionFailed, Expect, Test};
 
@@ -25,6 +26,14 @@ class AssertableTest {
     Assert::equals(
       new Assertable(2),
       (new Assertable(1))->map(function($v) { return $v * 2; })
+    );
+  }
+
+  #[Test]
+  public function map_string_using_1_required_parameter_only() {
+    Assert::equals(
+      new Assertable('Test'),
+      (new Assertable(' Test '))->map('trim')
     );
   }
 
@@ -62,5 +71,10 @@ class AssertableTest {
       new Assertable([2, 4]),
       (new Assertable($f()))->map(function($v) { return $v * 2; })
     );
+  }
+
+  #[Test, Expect(IllegalArgumentException::class)]
+  public function illegal_callback() {
+    (new Assertable(1))->map('not-a-function');
   }
 }
