@@ -25,7 +25,7 @@ class AssertableTest {
   public function map_scalar() {
     Assert::equals(
       new Assertable(2),
-      (new Assertable(1))->map(function($v) { return $v * 2; })
+      (new Assertable(1))->mappedBy(function($v) { return $v * 2; })
     );
   }
 
@@ -33,7 +33,7 @@ class AssertableTest {
   public function map_string_using_1_required_parameter_only() {
     Assert::equals(
       new Assertable('Test'),
-      (new Assertable(' Test '))->map('trim')
+      (new Assertable(' Test '))->mappedBy('trim')
     );
   }
 
@@ -41,7 +41,7 @@ class AssertableTest {
   public function map_array() {
     Assert::equals(
       new Assertable([2, 4]),
-      (new Assertable([1, 2]))->map(function($v) { return $v * 2; })
+      (new Assertable([1, 2]))->mappedBy(function($v) { return $v * 2; })
     );
   }
 
@@ -49,7 +49,7 @@ class AssertableTest {
   public function map_preserves_keys() {
     Assert::equals(
       new Assertable(['a' => 2, 'b' => 4]),
-      (new Assertable(['a' => 1, 'b' => 2]))->map(function($v) { return $v * 2; })
+      (new Assertable(['a' => 1, 'b' => 2]))->mappedBy(function($v) { return $v * 2; })
     );
   }
 
@@ -57,7 +57,7 @@ class AssertableTest {
   public function map_can_transform_keys_via_yield() {
     Assert::equals(
       new Assertable([1 => 'a', 2 => 'b']),
-      (new Assertable(['a' => 1, 'b' => 2]))->map(function($v, $k) { yield $v => $k; })
+      (new Assertable(['a' => 1, 'b' => 2]))->mappedBy(function($v, $k) { yield $v => $k; })
     );
   }
 
@@ -69,12 +69,12 @@ class AssertableTest {
     };
     Assert::equals(
       new Assertable([2, 4]),
-      (new Assertable($f()))->map(function($v) { return $v * 2; })
+      (new Assertable($f()))->mappedBy(function($v) { return $v * 2; })
     );
   }
 
   #[Test, Expect(IllegalArgumentException::class)]
   public function illegal_callback() {
-    (new Assertable(1))->map('not-a-function');
+    (new Assertable(1))->mappedBy('not-a-function');
   }
 }

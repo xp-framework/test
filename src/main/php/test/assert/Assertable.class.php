@@ -44,7 +44,7 @@ class Assertable {
    *
    * @param  function(mixed): mixed|function(mixed, int|string): mixed $mapper
    */
-  public function map($mapper): self {
+  public function mappedBy($mapper): self {
     try {
       $r= new ReflectionFunction($mapper);
       $mapper instanceof Closure || $mapper= $r->getClosure();
