@@ -49,6 +49,22 @@ The following shorthand methods exist on the `Assert` class:
 * `null(mixed $actual)` - check a given value is *null*
 * `instance(string|lang.Type $expected, mixed $actual)` - check a given value is an instance of the given type.
 
+Expected failures
+-----------------
+Using the `Expect` annotation, we can write tests that assert a given exception is raised:
+
+```php
+use test\{Assert, Expect, Test};
+
+class CalculatorTest {
+
+  #[Test, Expect(DivisionByZero::class)]
+  public function division_by_zero() {
+    (new Calculator())->divide(1, 0);
+  }
+}
+```
+
 Value-driven tests
 ------------------
 To keep test code short and concise, tests may be value-driven. Values can be provided either directly inline:
