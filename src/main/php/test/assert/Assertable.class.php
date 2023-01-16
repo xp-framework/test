@@ -4,7 +4,7 @@ use Traversable;
 use lang\Type;
 use test\AssertionFailed;
 
-class Assertions {
+class Assertable {
   public static $TRUE, $FALSE, $NULL;
   private $value;
 
@@ -39,7 +39,7 @@ class Assertions {
    * Map the value encapsulated in this fluent interface using a mapping
    * function. Works for scalars as well as arrays and any traversable
    * data structure. The given function recieves the value and returns
-   * the mapped value.
+   * the mapped value as a new `Assertable`.
    */
   public function map(callable $mapper): self {
     if (is_array($this->value)) {
@@ -61,7 +61,7 @@ class Assertions {
   }
 
   /**
-   * Test for equality
+   * Assert this value is equal to the given expected value
    * 
    * @param  mixed $expected
    * @return self
@@ -71,7 +71,7 @@ class Assertions {
   }
 
   /**
-   * Assert a given value is not equal to this value
+   * Assert this value is not equal to the given expected value
    * 
    * @param  mixed $expected
    * @return self
@@ -81,7 +81,7 @@ class Assertions {
   }
 
   /**
-   * Assert a this value is null
+   * Assert this value is null
    * 
    * @return self
    */
@@ -90,7 +90,7 @@ class Assertions {
   }
 
   /**
-   * Assert a this value is true
+   * Assert this value is true
    * 
    * @return self
    */
@@ -99,7 +99,7 @@ class Assertions {
   }
 
   /**
-   * Assert a this value is false
+   * Assert this value is false
    * 
    * @return self
    */
