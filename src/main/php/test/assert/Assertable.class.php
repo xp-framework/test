@@ -4,6 +4,7 @@ use Traversable;
 use lang\Type;
 use test\AssertionFailed;
 
+/** @test test.unittest.AssertableTest */
 class Assertable {
   public static $TRUE, $FALSE, $NULL;
   private $value;
