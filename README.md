@@ -12,7 +12,7 @@ Unit and integration tests for the XP Framework
 
 Writing a test
 --------------
-Tests reside inside a class suffixed by "Test" (*a test group*) and consist of methods annotated with the `Test` attribute (*the test cases*).
+Tests reside inside a class suffixed by "Test" (*a test group*) and consist of methods annotated with the `Test` attribute (*the test cases*). The convention for test method naming is to use lowercase, words separated by underscores, though this is not strictly necessary.
 
 ```php
 use test\{Assert, Test};
