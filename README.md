@@ -12,7 +12,7 @@ Unit and integration tests for the XP Framework
 
 Writing a test
 --------------
-Tests reside inside a class and are annotated with the `Test` attribute.
+Tests reside inside a class suffixed by "Test" (*a test group*) and consist of methods annotated with the `Test` attribute (*the test cases*).
 
 ```php
 use test\{Assert, Test};
@@ -26,7 +26,7 @@ class CalculatorTest {
 }
 ```
 
-To run the test, use the `test` subcommand:
+To run these tests, use the `test` subcommand:
 
 ```sh
 $ xp test CalculatorTest.class.php
