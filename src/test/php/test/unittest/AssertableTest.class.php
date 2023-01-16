@@ -45,6 +45,14 @@ class AssertableTest {
   }
 
   #[Test]
+  public function map_can_transform_keys_via_yield() {
+    Assert::equals(
+      new Assertable([1 => 'a', 2 => 'b']),
+      (new Assertable(['a' => 1, 'b' => 2]))->map(function($v, $k) { yield $v => $k; })
+    );
+  }
+
+  #[Test]
   public function map_traversable() {
     $f= function() {
       yield 1;

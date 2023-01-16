@@ -46,11 +46,16 @@ class Assertable {
     if (is_array($this->value) || $this->value instanceof Traversable) {
       $self= new self([]);
       foreach ($this->value as $key => $element) {
-        $self->value[$key]= $mapper($element);
+        $r= $mapper($element, $key);
+        if ($r instanceof Traversable) {
+          $self->value+= iterator_to_array($r);
+        } else {
+          $self->value[$key]= $r;
+        }
       }
       return $self;
     } else {
-      return new self($mapper($this->value));
+      return new self($mapper($this->value, null));
     }
   }
 
