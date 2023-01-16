@@ -22,7 +22,7 @@ class RequiredVersionTest {
     Assert::equals($expected, $fixture->matches($version));
   }
 
-  #[Test, Values(['1.0', '1.0.0', '1.1', '1.2.3'])]
+  #[Test, Values(['1.0', '1.0.0', '1.1', '1.10.3'])]
   public function caret_for($version) {
     $fixture= new RequiredVersion('Test', '^'.$version);
     Assert::true($fixture->matches($version));
