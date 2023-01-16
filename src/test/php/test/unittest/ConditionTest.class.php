@@ -12,8 +12,8 @@ class ConditionTest {
    * @param  ?string $context
    * @return ?string
    */
-  private function failures($condition, $context= null) {
-    foreach ($condition->assertions($context) as $assertion) {
+  private function failures($condition, $context) {
+    foreach ($condition->assertions(self::class) as $assertion) {
       if (!$assertion->verify()) return $assertion->requirement(false);
     }
     return null;
@@ -29,22 +29,25 @@ class ConditionTest {
 
   #[Test]
   public function success() {
-    Assert::null($this->failures(new Condition('function_exists("strlen")')));
+    Assert::that(new Condition('true'))
+      ->map(function($c) { return $this->failures($c, null); })
+      ->isNull()
+    ;
   }
 
   #[Test]
   public function failure_includes_assertion_expression() {
-    Assert::equals(
-      'failed verifying function_exists("false")',
-      $this->failures(new Condition('function_exists("false")'), self::class)
-    );
+    Assert::that(new Condition('function_exists("false")'))
+      ->map(function($c) { return $this->failures($c, null); })
+      ->isEqualTo('failed verifying function_exists("false")')
+    ;
   }
 
   #[Test]
   public function failure_can_access_context_scope() {
-    Assert::equals(
-      'failed verifying self::verify()',
-      $this->failures(new Condition('self::verify()'), self::class)
-    );
+    Assert::that(new Condition('self::verify()'))
+      ->map(function($c) { return $this->failures($c, self::class); })
+      ->isEqualTo('failed verifying self::verify()')
+    ;
   }
 }

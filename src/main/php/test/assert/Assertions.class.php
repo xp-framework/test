@@ -1,5 +1,6 @@
 <?php namespace test\assert;
 
+use Traversable;
 use lang\Type;
 use test\AssertionFailed;
 
@@ -32,6 +33,31 @@ class Assertions {
       throw new AssertionFailed($condition->describe($this->value, false));
     }
     return $this;
+  }
+
+  /**
+   * Map the value encapsulated in this fluent interface using a mapping
+   * function. Works for scalars as well as arrays and any traversable
+   * data structure. The given function recieves the value and returns
+   * the mapped value.
+   */
+  public function map(callable $mapper): self {
+    if (is_array($this->value)) {
+      $self= new self([]);
+      foreach ($this->value as $key => $element) {
+        $self->value[$key]= $mapper($element);
+      }
+      return $self;
+    } else if ($this->value instanceof Traversable) {
+      $f= function() use($mapper) {
+        foreach ($this->value as $key => $element) {
+          yield $key => $mapper($element);
+        }
+      };
+      return new self($f());
+    } else {
+      return new self($mapper($this->value));
+    }
   }
 
   /**
