@@ -21,7 +21,7 @@ class FromFile {
       return;
     }
 
-    throw new IllegalArgumentException($path.' is not in class path');
+    throw new IllegalArgumentException($arg.' is not in class path');
   }
 
   /** Returns the type discovered from the file */
