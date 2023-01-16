@@ -1,7 +1,7 @@
 <?php namespace test;
 
 use lang\Type;
-use test\assert\{Assertions, Equals, Instance};
+use test\assert\{Assertable, Equals, Instance};
 
 abstract class Assert {
 
@@ -9,10 +9,10 @@ abstract class Assert {
    * Assertion DSL
    *
    * @param  mixed $value
-   * @return test.assert.Assertions
+   * @return Assertable
    */
   public static function that($value) {
-    return new Assertions($value);
+    return new Assertable($value);
   }
 
   /**
@@ -23,7 +23,7 @@ abstract class Assert {
    * @return void
    */
   public static function equals($expected, $actual) {
-    (new Assertions($actual))->is(new Equals($expected));
+    (new Assertable($actual))->is(new Equals($expected));
   }
 
   /**
@@ -34,7 +34,7 @@ abstract class Assert {
    * @return void
    */
   public static function notEquals($expected, $actual) {
-    (new Assertions($actual))->isNot(new Equals($expected));
+    (new Assertable($actual))->isNot(new Equals($expected));
   }
 
   /**
@@ -44,7 +44,7 @@ abstract class Assert {
    * @return void
    */
   public static function true($actual) {
-    (new Assertions($actual))->is(Assertions::$TRUE);
+    (new Assertable($actual))->is(Assertable::$TRUE);
   }
 
   /**
@@ -54,7 +54,7 @@ abstract class Assert {
    * @return void
    */
   public static function false($actual) {
-    (new Assertions($actual))->is(Assertions::$FALSE);
+    (new Assertable($actual))->is(Assertable::$FALSE);
   }
 
   /**
@@ -64,7 +64,7 @@ abstract class Assert {
    * @return void
    */
   public static function null($actual) {
-    (new Assertions($actual))->is(Assertions::$NULL);
+    (new Assertable($actual))->is(Assertable::$NULL);
   }
 
   /**
@@ -75,6 +75,6 @@ abstract class Assert {
    * @return void
    */
   public static function instance($expected, $actual) {
-    (new Assertions($actual))->is(new Instance($expected));
+    (new Assertable($actual))->is(new Instance($expected));
   }
 }

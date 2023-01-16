@@ -34,6 +34,11 @@ class EqualsTest {
   }
 
   #[Test]
+  public function equals_clone() {
+    Assert::true((new Equals($this))->matches(clone $this));
+  }
+
+  #[Test]
   public function array_order_is_relevant() {
     Assert::false((new Equals([1, 2, 3]))->matches([3, 2, 1]));
   }
