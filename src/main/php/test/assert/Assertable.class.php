@@ -48,43 +48,30 @@ class Assertable {
     try {
       $r= new ReflectionFunction($mapper);
       $mapper instanceof Closure || $mapper= $r->getClosure();
+
+      // Do not pass keys to callables with only one required parameter.
+      // This enables to use map with functions such as trim(), which
+      // would otherwise choke on the array keys.
+      if (1 === $r->getNumberOfRequiredParameters()) {
+        $mapper= function($value, $key) use($mapper) { return $mapper($value); };
+      }
     } catch (Throwable $e) {
       throw new IllegalArgumentException($e->getMessage(), $e);
     }
 
-    // Do not pass keys to callables with only one required parameter.
-    // This enables to use map with functions such as trim(), which
-    // would otherwise choke on the array keys.
-    if (1 === $r->getNumberOfRequiredParameters()) {
-      if (is_array($this->value) || $this->value instanceof Traversable) {
-        $self= new self([]);
-        foreach ($this->value as $key => $element) {
-          $m= $mapper($element);
-          if ($m instanceof Traversable) {
-            $self->value+= iterator_to_array($m);
-          } else {
-            $self->value[$key]= $m;
-          }
+    if (is_array($this->value) || $this->value instanceof Traversable) {
+      $self= new self([]);
+      foreach ($this->value as $key => $element) {
+        $m= $mapper($element, $key);
+        if ($m instanceof Traversable) {
+          $self->value+= iterator_to_array($m);
+        } else {
+          $self->value[$key]= $m;
         }
-        return $self;
-      } else {
-        return new self($mapper($this->value));
       }
+      return $self;
     } else {
-      if (is_array($this->value) || $this->value instanceof Traversable) {
-        $self= new self([]);
-        foreach ($this->value as $key => $element) {
-          $m= $mapper($element, $key);
-          if ($m instanceof Traversable) {
-            $self->value+= iterator_to_array($m);
-          } else {
-            $self->value[$key]= $m;
-          }
-        }
-        return $self;
-      } else {
-        return new self($mapper($this->value, null));
-      }
+      return new self($mapper($this->value, null));
     }
   }
 
