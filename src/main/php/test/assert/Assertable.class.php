@@ -43,34 +43,15 @@ class Assertable {
    * the mapped value as a new `Assertable`.
    */
   public function map(callable $mapper): self {
-    if (is_array($this->value)) {
+    if (is_array($this->value) || $this->value instanceof Traversable) {
       $self= new self([]);
       foreach ($this->value as $key => $element) {
         $self->value[$key]= $mapper($element);
       }
       return $self;
-    } else if ($this->value instanceof Traversable) {
-      $f= function() use($mapper) {
-        foreach ($this->value as $key => $element) {
-          yield $key => $mapper($element);
-        }
-      };
-      return new self($f());
     } else {
       return new self($mapper($this->value));
     }
-  }
-
-  /**
-   * Transform the value encapsulated in this fluent interface to an
-   * array. Uses `iterator_to_array()` for traversable data structures,
-   * an array cast on values of any other type.
-   */
-  public function asArray(): self {
-    return new self($this->value instanceof Traversable
-      ? iterator_to_array($this->value)
-      : (array)$this->value
-    );
   }
 
   /**

@@ -52,7 +52,7 @@ class AssertableTest {
     };
     Assert::equals(
       new Assertable([2, 4]),
-      (new Assertable($f()))->map(function($v) { return $v * 2; })->asArray()
+      (new Assertable($f()))->map(function($v) { return $v * 2; })
     );
   }
 }
