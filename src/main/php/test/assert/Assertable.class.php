@@ -62,6 +62,18 @@ class Assertable {
   }
 
   /**
+   * Transform the value encapsulated in this fluent interface to an
+   * array. Uses `iterator_to_array()` for traversable data structures,
+   * an array cast on values of any other type.
+   */
+  public function asArray(): self {
+    return new self($this->value instanceof Traversable
+      ? iterator_to_array($this->value)
+      : (array)$this->value
+    );
+  }
+
+  /**
    * Assert this value is equal to the given expected value
    * 
    * @param  mixed $expected
