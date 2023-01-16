@@ -33,7 +33,7 @@ $ xp test CalculatorTest.class.php
 > [PASS] CalculatorTest
   ✓ addition
 
-Tests:       1 succeeded, 0 skipped, 0 failed
+Tests cases: 1 succeeded, 0 skipped, 0 failed
 Memory used: 1556.36 kB (1610.49 kB peak)
 Time taken:  0.001 seconds
 ```

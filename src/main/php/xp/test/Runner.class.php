@@ -116,7 +116,7 @@ class Runner {
     // Print out summary of test run
     $rt= Runtime::getInstance();
     Console::writeLinef(
-      "\033[37mTests:\033[0m       \033[32m%d succeeded\033[0m, %d skipped, %d failed",
+      "\033[37mTest cases:\033[0m  \033[32m%d succeeded\033[0m, %d skipped, %d failed",
       $metrics->count['success'],
       $metrics->count['skipped'],
       $metrics->count['failure']
