@@ -1,5 +1,7 @@
 <?php namespace test\unittest;
 
+use lang\Reflection;
+use lang\reflection\Type;
 use test\verify\Condition;
 use test\{Assert, Test, Values};
 
@@ -9,11 +11,11 @@ class ConditionTest {
    * Returns failures from verifying a condition, if any - NULL otherwise.
    *
    * @param  Condition $condition
-   * @param  ?string $context
+   * @param  ?Type $context
    * @return ?string
    */
   private function failures($condition, $context) {
-    foreach ($condition->assertions(self::class) as $assertion) {
+    foreach ($condition->assertions($context) as $assertion) {
       if (!$assertion->verify()) return $assertion->requirement(false);
     }
     return null;
@@ -46,7 +48,7 @@ class ConditionTest {
   #[Test]
   public function failure_can_access_context_scope() {
     Assert::that(new Condition('self::verify()'))
-      ->mappedBy(function($c) { return $this->failures($c, self::class); })
+      ->mappedBy(function($c) { return $this->failures($c, Reflection::type(self::class)); })
       ->isEqualTo('failed verifying self::verify()')
     ;
   }

@@ -1,5 +1,6 @@
 <?php namespace test\verify;
 
+use lang\reflection\Type;
 use test\Prerequisite;
 use test\assert\{Assertion, Verify, Matches, RequiredVersion};
 
@@ -22,7 +23,7 @@ class Runtime implements Prerequisite {
   /**
    * Yields assertions to verify runtime OS / PHP
    *
-   * @param  ?string $context
+   * @param  ?Type $context
    * @return iterable
    */
   public function assertions($context) {

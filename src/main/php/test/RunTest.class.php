@@ -32,12 +32,12 @@ class RunTest implements Runnable {
    * Passes arguments. Suffixes this test case's name with a comma-separted list
    * of string representations of the given arguments enclosed in square brackets.
    *
-   * @param  mixed[] $arguments
+   * @param  array|mixed $arguments
    * @return self
    */
   public function passing($arguments) {
-    $this->arguments= $arguments;
-    $this->name.= Objects::stringOf($arguments);
+    $this->arguments= is_array($arguments) ? $arguments : [$arguments];
+    $this->name.= Objects::stringOf($this->arguments);
     return $this;
   }
 

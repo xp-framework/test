@@ -24,7 +24,7 @@ class FromDirectoryTest {
     new FromDirectory('does-not-exist');
   }
 
-  #[Test, Values('arguments')]
+  #[Test, Values(from: 'arguments')]
   public function folder($argument) {
     Assert::equals(new Folder('.'), (new FromDirectory($argument))->folder());
   }

@@ -74,7 +74,7 @@ use test\{Assert, Test, Values};
 
 class CalculatorTest {
 
-  #[Test, Values([0, 0], [1, 1], [-1, 1])]
+  #[Test, Values([[0, 0], [1, 1], [-1, 1]])]
   public function addition($a, $b) {
     Assert::equals($a + $b, (new Calculator())->add($a, $b));
   }
@@ -88,13 +88,13 @@ use test\{Assert, Test, Values};
 
 class CalculatorTest {
 
-  private function provider(): iterable {
+  private function operands(): iterable {
     yield [0, 0];
     yield [1, 1];
     yield [-1, 1];
   }
 
-  #[Test, Values('provider')]
+  #[Test, Values(from: 'operands')]
   public function addition($a, $b) {
     Assert::equals($a + $b, (new Calculator())->add($a, $b));
   }
