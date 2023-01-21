@@ -24,11 +24,6 @@ class FromClassTest {
   }
 
   #[Test]
-  public function groups_yields_this() {
-    Assert::equals([new TestClass(self::class)], iterator_to_array((new FromClass(self::class))->groups()));
-  }
-
-  #[Test]
   public function no_selection_by_default() {
     Assert::null((new FromClass(self::class))->selection());
   }
@@ -45,6 +40,14 @@ class FromClassTest {
       ->mappedBy(function($g) { return $g->tests(); })
       ->mappedBy(function($t) { return $t->name(); })
       ->isEqualTo(['can_create'])
+    ;
+  }
+
+  #[Test]
+  public function groups_yields_this() {
+    Assert::that(new FromClass(self::class))
+      ->mappedBy(function($f) { return $f->groups(); })
+      ->isEqualTo([new TestClass(self::class)])
     ;
   }
 }
