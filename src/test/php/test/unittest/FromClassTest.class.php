@@ -25,26 +25,22 @@ class FromClassTest {
 
   #[Test]
   public function groups_yields_this() {
-    $fixture= new FromClass(self::class);
-    Assert::equals([new TestClass(self::class)], iterator_to_array($fixture->groups()));
+    Assert::equals([new TestClass(self::class)], iterator_to_array((new FromClass(self::class))->groups()));
   }
 
   #[Test]
   public function no_selection_by_default() {
-    $fixture= new FromClass(self::class);
-    Assert::null($fixture->selection());
+    Assert::null((new FromClass(self::class))->selection());
   }
 
   #[Test, Values(['can_create', 'can*'])]
   public function selection($pattern) {
-    $fixture= new FromClass(self::class, $pattern);
-    Assert::equals($pattern, $fixture->selection());
+    Assert::equals($pattern, (new FromClass(self::class, $pattern))->selection());
   }
 
   #[Test, Values(['can_create', 'can*'])]
   public function selecting($pattern) {
-    $fixture= new FromClass(self::class, $pattern);
-    Assert::that($fixture)
+    Assert::that(new FromClass(self::class, $pattern))
       ->mappedBy(function($f) { return $f->groups(); })
       ->mappedBy(function($g) { return $g->tests(); })
       ->mappedBy(function($t) { return $t->name(); })
