@@ -3,6 +3,8 @@ Tests - ChangeLog
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #4: Generalize values annotation into provider handling
+  (@thekid)
 * Renamed `map()` -> `mappedBy()` to be consisten with rest of naming
   used inside the *Assertable* fluent interface
   (@thekid)
