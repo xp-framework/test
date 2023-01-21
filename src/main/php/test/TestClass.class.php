@@ -5,15 +5,17 @@ use lang\{Reflection, XPClass, Throwable};
 use test\verify\Runtime;
 
 class TestClass {
-  private $type;
+  private $type, $selection;
 
   /**
    * Creates an instance for a given class
    *
    * @param  string|object|XPClass|Type|ReflectionClass $arg
+   * @param ?string $selection
    */
-  public function __construct($arg) {
-    $this->type= Reflection::type($arg);
+  public function __construct($arg, $selection= null) {
+    $this->type= $arg instanceof Type ? $arg : Reflection::type($arg);
+    $this->selection= $selection;
   }
 
   /** @return string */
@@ -46,7 +48,10 @@ class TestClass {
         $before[]= $method;
       } else if ($annotations->provides(After::class)) {
         $after[]= $method;
-      } else if ($annotations->provides(Test::class)) {
+      } else if (
+        $annotations->provides(Test::class) &&
+        (null === $this->selection || fnmatch($this->selection, $method->name()))
+      ) {
 
         // Check prerequisites, if any fail - mark test as skipped and continue with next
         foreach ($annotations->all(Prerequisite::class) as $prerequisite) {
