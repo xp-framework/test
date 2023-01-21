@@ -70,6 +70,7 @@ class Runner {
       }
     }
 
+    $failures= [];
     foreach ($tests->groups() as $group) {
       Console::writef("\r> \033[44;1;37m RUN… \033[0m \033[37m%s\033[0m", $group->name());
 
@@ -89,7 +90,7 @@ class Runner {
 
       // Run tests in this group...
       $i= 0;
-      $grouped= $failures= [];
+      $grouped= [];
       $before= $metrics->count['failure'];
       try {
         foreach ($group->tests() as $test) {
@@ -130,13 +131,12 @@ class Runner {
         }
       }
       Console::writeLine();
-
-      // ...finally, output all failures
-      foreach ($failures as $location => $exception) {
-        Console::writeLinef("\033[31m⨯ %s\033[0m\n  %s\n", $location, Objects::stringOf($exception, '  '));
-      }
     }
-    $timer->stop();
+
+    // ...finally, output all failures
+    foreach ($failures as $location => $exception) {
+      Console::writeLinef("\033[31m⨯ %s\033[0m\n  %s\n", $location, Objects::stringOf($exception, '  '));
+    }
 
     // Print out summary of test run
     $rt= Runtime::getInstance();
