@@ -28,19 +28,9 @@ class FromClassTest {
     Assert::null((new FromClass(self::class))->selection());
   }
 
-  #[Test, Values(['can_create', 'can*'])]
+  #[Test, Values(['can_create', 'can*', '*create'])]
   public function selection($pattern) {
     Assert::equals($pattern, (new FromClass(self::class, $pattern))->selection());
-  }
-
-  #[Test, Values(['can_create', 'can*'])]
-  public function selecting($pattern) {
-    Assert::that(new FromClass(self::class, $pattern))
-      ->mappedBy(function($f) { return $f->groups(); })
-      ->mappedBy(function($g) { return $g->tests(); })
-      ->mappedBy(function($t) { return $t->name(); })
-      ->isEqualTo(['can_create'])
-    ;
   }
 
   #[Test]
@@ -48,6 +38,16 @@ class FromClassTest {
     Assert::that(new FromClass(self::class))
       ->mappedBy(function($f) { return $f->groups(); })
       ->isEqualTo([new TestClass(self::class)])
+    ;
+  }
+
+  #[Test, Values(['can_create', 'can*', '*create'])]
+  public function selecting($pattern) {
+    Assert::that(new FromClass(self::class, $pattern))
+      ->mappedBy(function($f) { return $f->groups(); })
+      ->mappedBy(function($g) { return $g->tests(); })
+      ->mappedBy(function($t) { return $t->name(); })
+      ->isEqualTo(['can_create'])
     ;
   }
 }
