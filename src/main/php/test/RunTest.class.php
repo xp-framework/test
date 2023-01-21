@@ -16,11 +16,14 @@ class RunTest implements Runnable {
     $this->run= $run;
   }
 
+  /** @return string */
+  public function name() { return $this->name; }
+
   /**
    * Sets an expected exception type
    *
-   * @param Type $type
-   * @param ?string $message
+   * @param  Type $type
+   * @param  ?string $message
    * @return self
    */
   public function expecting(Type $type, $message= null) {
