@@ -28,7 +28,14 @@ class TestClass {
 
   /** @return iterable */
   public function tests() {
-    $instance= $this->type->newInstance();
+    $pass= [];
+    foreach ($this->type->annotations()->all(Provider::class) as $provider) {
+      foreach ($provider->newInstance()->values($this->type) as $arguments) {
+        $pass[]= $arguments;
+      }
+    }
+
+    $instance= $this->type->newInstance(...$pass);
 
     // Enumerate methods
     $before= $after= $cases= [];
