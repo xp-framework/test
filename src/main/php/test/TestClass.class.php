@@ -1,6 +1,6 @@
 <?php namespace test;
 
-use lang\reflection\Type;
+use lang\reflection\{Type, InvocationFailed};
 use lang\{Reflection, XPClass, Throwable};
 use test\verify\Runtime;
 
@@ -30,14 +30,17 @@ class TestClass {
 
   /** @return iterable */
   public function tests() {
-    $pass= [];
-    foreach ($this->type->annotations()->all(Provider::class) as $provider) {
-      foreach ($provider->newInstance()->values($this->type) as $arguments) {
-        $pass[]= $arguments;
+    try {
+      $pass= [];
+      foreach ($this->type->annotations()->all(Provider::class) as $provider) {
+        foreach ($provider->newInstance()->values($this->type) as $arguments) {
+          $pass[]= $arguments;
+        }
       }
+      $instance= $this->type->newInstance(...$pass);
+    } catch (InvocationFailed $e) {
+      throw new FailAll($e->target()->compoundName(), $e->getCause());
     }
-
-    $instance= $this->type->newInstance(...$pass);
 
     // Enumerate methods
     $before= $after= $cases= [];

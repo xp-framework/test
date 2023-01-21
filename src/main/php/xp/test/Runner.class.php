@@ -2,7 +2,7 @@
 
 use lang\Runtime;
 use test\source\{FromClass, FromDirectory, FromFile, FromPackage};
-use test\{Tests, Metrics};
+use test\{Tests, Metrics, FailAll};
 use util\Objects;
 use util\cmd\Console;
 use util\profiling\Timer;
@@ -42,6 +42,7 @@ class Runner {
     static $summary= [
       'success' => "\033[42;1;37m PASS \033[0m",
       'failure' => "\033[41;1;37m FAIL \033[0m",
+      'stopped' => "\033[47;1;30m STOP \033[0m",
       'skipped' => "\033[43;1;37m SKIP \033[0m",
     ];
     static $indicators= [
@@ -87,31 +88,52 @@ class Runner {
 
       // Run tests in this group...
       $i= 0;
-      $grouped= [];
-      $status= 'success';
-      foreach ($group->tests() as $test) {
-        Console::writef("\r%s", $progress[$i++] ?? $progress[$i= 0]);
+      $grouped= $failures= [];
+      $before= $metrics->count['failure'];
+      try {
+        foreach ($group->tests() as $test) {
+          Console::writef("\r%s", $progress[$i++] ?? $progress[$i= 0]);
 
-        $timer->start();
-        $outcome= $test->run();
-        $timer->stop();
+          $timer->start();
+          $outcome= $test->run();
+          $timer->stop();
 
-        if ('failure' === $outcome->kind()) $status= 'failure';
-        $grouped[]= $metrics->record($outcome, $timer->elapsedTime());
+          $grouped[]= $metrics->record($outcome, $timer->elapsedTime());
+        }
+  
+        $status= $metrics->count['failure'] > $before ? 'failure' : 'success';
+        Console::writeLinef("\r> %s \033[37m%s\033[0m", $summary[$status], $group->name());
+      } catch (FailAll $f) {
+        $failures[$f->getMessage()]= $f->getCause();
+        $metrics->count['failure']++;
+        Console::writeLinef(
+          "\r> %s \033[37m%s\033[1;32;3m // Stop: Exception from %s\033[0m",
+          $summary['stopped'],
+          $group->name(),
+          $f->getMessage()
+        );
       }
 
-      // ...then report results
-      Console::writeLinef("\r> %s \033[37m%s\033[0m", $summary[$status], $group->name());
+      // ...report test case summary
       foreach ($grouped as $outcome) {
         $kind= $outcome->kind();
         Console::write('  ', $indicators[$kind], ' ', str_replace("\n", "\n    ", $outcome->test));
         switch ($kind) {
           case 'success': Console::writeLine(); break;
-          case 'skipped': Console::writeLine("\033[1;32;3m // Skip: ", $outcome->reason, "\033[0m"); break;
-          case 'failure': Console::writeLine("\n  ", Objects::stringOf($outcome->cause, '  ')); break;
+          case 'skipped': Console::writeLinef("\033[1;32;3m // Skip: %s\033[0m", $outcome->reason); break;
+          case 'failure': {
+            Console::writeLinef("\033[1;32;3m // Fail: %s\033[0m", $outcome->cause->getMessage());
+            $failures[$group->name().'::'.$outcome->test]= $outcome->cause;
+            break;
+          }
         }
       }
       Console::writeLine();
+
+      // ...finally, output all failures
+      foreach ($failures as $location => $exception) {
+        Console::writeLinef("\033[31m⨯ %s\033[0m\n  %s\n", $location, Objects::stringOf($exception, '  '));
+      }
     }
     $timer->stop();
 
