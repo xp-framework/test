@@ -3,6 +3,9 @@ Tests - ChangeLog
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #5: Pass `[class.Name]::[pattern]` to execute only test cases
+  matching the given pattern
+  (@thekid)
 * Merged PR #4: Generalize values annotation into provider handling
   (@thekid)
 * Renamed `map()` -> `mappedBy()` to be consisten with rest of naming
