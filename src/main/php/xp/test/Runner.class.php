@@ -107,7 +107,7 @@ class Runner {
         $failures[$f->getMessage()]= $f->getCause();
         $metrics->count['failure']++;
         Console::writeLinef(
-          "\r> %s \033[37m%s\033[1;32;3m // Stop: Exception from %s\033[0m",
+          "\r> %s \033[37m%s\033[1;32;3m // Exception from %s\033[0m",
           $summary['stopped'],
           $group->name(),
           $f->getMessage()
