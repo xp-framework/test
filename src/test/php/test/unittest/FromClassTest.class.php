@@ -18,7 +18,7 @@ class FromClassTest {
     new FromClass(self::class);
   }
 
-  #[Test, Values('arguments')]
+  #[Test, Values(from: 'arguments')]
   public function type($argument) {
     Assert::equals(Reflection::type(self::class), (new FromClass($argument))->type());
   }

@@ -28,7 +28,7 @@ class EqualsTest {
     }];
   }
 
-  #[Test, Values('values')]
+  #[Test, Values(from: 'values')]
   public function equals_itself($value) {
     Assert::true((new Equals($value))->matches($value));
   }

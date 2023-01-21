@@ -22,28 +22,35 @@ class TestClass {
   /** @return iterable */
   public function prerequisites() {
     foreach ($this->type->annotations()->all(Prerequisite::class) as $prerequisite) {
-      yield from $prerequisite->newInstance()->assertions($this->type->literal());
+      yield from $prerequisite->newInstance()->assertions($this->type);
     }
   }
 
   /** @return iterable */
   public function tests() {
-    $instance= $this->type->newInstance();
+    $pass= [];
+    foreach ($this->type->annotations()->all(Provider::class) as $provider) {
+      foreach ($provider->newInstance()->values($this->type) as $arguments) {
+        $pass[]= $arguments;
+      }
+    }
 
-    // Enumerate methods, handling BC with xp-framework/unittest annotations
+    $instance= $this->type->newInstance(...$pass);
+
+    // Enumerate methods
     $before= $after= $cases= [];
     foreach ($this->type->methods() as $method) {
       $annotations= $method->annotations();
 
-      if ($annotations->provides(Before::class) || $annotations->provides('unittest.Before')) {
+      if ($annotations->provides(Before::class)) {
         $before[]= $method;
-      } else if ($annotations->provides(After::class) || $annotations->provides('unittest.After')) {
+      } else if ($annotations->provides(After::class)) {
         $after[]= $method;
-      } else if ($annotations->provides(Test::class) || $annotations->provides('unittest.Test')) {
+      } else if ($annotations->provides(Test::class)) {
 
         // Check prerequisites, if any fail - mark test as skipped and continue with next
         foreach ($annotations->all(Prerequisite::class) as $prerequisite) {
-          foreach ($prerequisite->newInstance()->assertions($this->type->literal()) as $assertion) {
+          foreach ($prerequisite->newInstance()->assertions($this->type) as $assertion) {
             if (!$assertion->verify()) {
               $cases[]= new SkipTest($method->name(), $assertion->requirement(false));
               continue 3;
@@ -53,32 +60,21 @@ class TestClass {
 
         $case= new RunTest($method->name(), $method->closure($instance));
 
-        // Check @Expect
-        if ($expect= $annotations->type(Expect::class) ?? $annotations->type('unittest.Expect')) {
+        // Check expected exceptions
+        if ($expect= $annotations->type(Expect::class)) {
           $case->expecting(Reflection::type($expect->argument('class') ?? $expect->argument(0)));
         }
 
-        // Check @Values, which may either be:
-        //
-        // * Referencing a provider method: `Values('provider')`
-        // * Compact form for one-arg methods: `Values([1, 2, 3])`
-        // * Passing multiple arguments: `Values([['a', 'b'], ['c', 'd']])`
-        if ($values= $annotations->type(Values::class) ?? $annotations->type('unittest.Values')) {
-          $args= $values->arguments();
-          if (sizeof($args) > 1) {
-            $provider= $args;
-          } else if (is_array($args[0])) {
-            $provider= $args[0];
-          } else {
-            $provider= $this->type->method($args[0])->invoke($instance, [], $instance);
+        // For each provider, create test case variations from the values it provides
+        $variations= 0;
+        foreach ($annotations->all(Provider::class) as $provider) {
+          foreach ($provider->newInstance()->values($this->type, $instance) as $arguments) {
+            $cases[]= (clone $case)->passing($arguments);
+            $variations++;
           }
-
-          foreach ($provider as $values) {
-            $cases[]= (clone $case)->passing(is_array($values) ? $values : [$values]);
-          }
-        } else {
-          $cases[]= $case;
         }
+
+        $variations || $cases[]= $case;
       }
     }
 
