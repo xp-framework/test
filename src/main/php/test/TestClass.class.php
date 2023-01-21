@@ -2,7 +2,7 @@
 
 use lang\reflection\{Type, InvocationFailed};
 use lang\{Reflection, XPClass, Throwable};
-use test\verify\Runtime;
+use test\verify\Verification;
 
 class TestClass {
   private $type, $selection;
@@ -23,8 +23,8 @@ class TestClass {
 
   /** @return iterable */
   public function prerequisites() {
-    foreach ($this->type->annotations()->all(Prerequisite::class) as $prerequisite) {
-      yield from $prerequisite->newInstance()->assertions($this->type);
+    foreach ($this->type->annotations()->all(Verification::class) as $verify) {
+      yield from $verify->newInstance()->assertions($this->type);
     }
   }
 
@@ -56,17 +56,14 @@ class TestClass {
         (null === $this->selection || fnmatch($this->selection, $method->name()))
       ) {
 
-        // Check prerequisites, if any fail - mark test as skipped and continue with next
-        foreach ($annotations->all(Prerequisite::class) as $prerequisite) {
-          foreach ($prerequisite->newInstance()->assertions($this->type) as $assertion) {
-            if (!$assertion->verify()) {
-              $cases[]= new SkipTest($method->name(), $assertion->requirement(false));
-              continue 3;
-            }
+        $case= new RunTest($method->name(), $method->closure($instance));
+
+        // Check prerequisites
+        foreach ($annotations->all(Verification::class) as $verify) {
+          foreach ($verify->newInstance()->assertions($this->type) as $prerequisite) {
+            $case->verify($prerequisite);
           }
         }
-
-        $case= new RunTest($method->name(), $method->closure($instance));
 
         // Check expected exceptions
         if ($expect= $annotations->type(Expect::class)) {

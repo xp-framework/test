@@ -1,12 +1,12 @@
 <?php namespace test;
 
-class Ignore implements Prerequisite {
+use test\verify\Verification;
+
+class Ignore implements Verification, Prerequisite {
   private $reason;
 
   /** @param ?string $reason */
-  public function __construct($reason= null) {
-    $this->reason= $reason;
-  }
+  public function __construct($reason= null) { $this->reason= $reason; }
 
   /**
    * Describes requirement

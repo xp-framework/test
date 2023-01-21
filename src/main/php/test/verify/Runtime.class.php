@@ -1,10 +1,9 @@
 <?php namespace test\verify;
 
 use lang\reflection\Type;
-use test\Prerequisite;
 use test\assert\{Assertion, Verify, Matches, RequiredVersion};
 
-class Runtime implements Prerequisite {
+class Runtime implements Verification {
   private $os, $php, $extensions;
 
   /**
@@ -30,10 +29,11 @@ class Runtime implements Prerequisite {
     null === $this->os || yield new Assertion(PHP_OS, new Matches('/'.$this->os.'/i'));
     null === $this->php || yield new Assertion(PHP_VERSION, new RequiredVersion('PHP', $this->php));
 
-    if ($this->extensions) {
-      foreach ($this->extensions as $extension) {
-        yield new Assertion(extension_loaded($extension), new Verify('PHP extension "'.$extension.'" is loaded'));
-      }
+    foreach ($this->extensions as $extension) {
+      yield new Assertion(
+        extension_loaded($extension),
+        new Verify('PHP extension "'.$extension.'" is loaded')
+      );
     }
   }
 }

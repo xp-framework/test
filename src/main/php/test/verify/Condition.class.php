@@ -2,7 +2,6 @@
 
 use Closure;
 use lang\reflection\Type;
-use test\Prerequisite;
 use test\assert\{Assertion, Verify};
 
 /**
@@ -13,7 +12,7 @@ use test\assert\{Assertion, Verify};
  *
  * @test  test.unittest.ConditionTest
  */
-class Condition implements Prerequisite {
+class Condition implements Verification {
   private $assert;
 
   /** @param string|function(): bool $assert */

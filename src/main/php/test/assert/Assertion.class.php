@@ -1,6 +1,8 @@
 <?php namespace test\assert;
 
-class Assertion {
+use test\Prerequisite;
+
+class Assertion implements Prerequisite {
   public $value, $condition;
 
   public function __construct($value, $condition) {

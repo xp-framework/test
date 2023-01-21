@@ -3,10 +3,14 @@
 interface Prerequisite {
 
   /**
-   * Return assertions for a given context type
+   * Describes requirement
    *
-   * @param  ?string $context
-   * @return iterable
+   * @param  bool $positive
+   * @return string
    */
-  public function assertions($context);
+  public function requirement($positive= true);
+
+  /** @return bool */
+  public function verify();
+
 }

@@ -3,11 +3,12 @@
 use Throwable as Any;
 use lang\reflection\Type;
 use lang\{Throwable, Runnable};
-use test\outcome\{Succeeded, Failed};
+use test\outcome\{Succeeded, Skipped, Failed};
 use util\Objects;
 
 class RunTest implements Runnable {
   private $name, $run;
+  private $prerequisites= [];
   private $expecting= null;
   private $arguments= [];
 
@@ -18,6 +19,17 @@ class RunTest implements Runnable {
 
   /** @return string */
   public function name() { return $this->name; }
+
+  /**
+   * Sets an expected exception type
+   *
+   * @param  Prerequisite $prerequisite
+   * @return self
+   */
+  public function verify(Prerequisite $prerequisite) {
+    $this->prerequisites[]= $prerequisite;
+    return $this;
+  }
 
   /**
    * Sets an expected exception type
@@ -46,8 +58,11 @@ class RunTest implements Runnable {
 
   /** Runs this test case and returns its outcome */
   public function run(): Outcome {
-    \xp::gc();
+    foreach ($this->prerequisites as $prerequisite) {
+      if (!$prerequisite->verify()) return new Skipped($this->name, $prerequisite->requirement(false));
+    }
 
+    \xp::gc();
     try {
       ($this->run)(...$this->arguments);
       return new Succeeded($this->name);
