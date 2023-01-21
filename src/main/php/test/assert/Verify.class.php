@@ -14,7 +14,7 @@ class Verify extends Condition {
   public function describe($value, $positive) {
     return sprintf(
       '%s %s',
-      $positive ? 'verified' : 'failed verifying',
+      $positive ? 'Verified' : 'Failed verifying',
       $this->description ?? self::stringOf($value)
     );
   }
