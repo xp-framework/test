@@ -76,6 +76,7 @@ class Runner {
       // Check group prerequisites
       foreach ($group->prerequisites() as $prerequisite) {
         if (!$prerequisite->verify()) {
+          $metrics->count['skipped']++;
           Console::writeLinef(
             "\r> %s \033[37m%s\033[1;32;3m // %s\033[0m\n",
             $summary['skipped'],
