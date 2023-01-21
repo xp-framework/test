@@ -41,7 +41,7 @@ class ConditionTest {
   public function failure_includes_assertion_expression() {
     Assert::that(new Condition('function_exists("false")'))
       ->mappedBy(function($c) { return $this->failures($c, null); })
-      ->isEqualTo('failed verifying function_exists("false")')
+      ->isEqualTo('Failed verifying function_exists("false")')
     ;
   }
 
@@ -49,7 +49,7 @@ class ConditionTest {
   public function failure_can_access_context_scope() {
     Assert::that(new Condition('self::verify()'))
       ->mappedBy(function($c) { return $this->failures($c, Reflection::type(self::class)); })
-      ->isEqualTo('failed verifying self::verify()')
+      ->isEqualTo('Failed verifying self::verify()')
     ;
   }
 }
