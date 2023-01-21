@@ -6,18 +6,27 @@ use lang\{Reflection, XPClass};
 use test\TestClass;
 
 class FromClass {
-  private $type;
+  private $type, $selection;
 
-  /** @param string|object|XPClass|Type|ReflectionClass $arg */
-  public function __construct($arg) {
+  /**
+   * Creates a class source
+   *
+   * @param string|object|XPClass|Type|ReflectionClass $arg
+   * @param ?string $selection
+   */
+  public function __construct($arg, $selection= null) {
     $this->type= Reflection::type($arg);
+    $this->selection= $selection;
   }
 
   /** Returns the class given */
   public function type(): Type { return $this->type; }
 
+  /** @return ?string */
+  public function selection() { return $this->selection; }
+
   /** @return iterable */
   public function groups() {
-    yield new TestClass($this->type);
+    yield new TestClass($this->type, $this->selection);
   }
 }

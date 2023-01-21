@@ -62,6 +62,8 @@ class Runner {
         $tests->add(new FromPackage(substr($args[$i], 0, -3), true));
       } else if (0 === substr_compare($args[$i], '.*', -2, 2)) {
         $tests->add(new FromPackage(substr($args[$i], 0, -2), false));
+      } else if (false !== ($p= strpos($args[$i], '::'))) {
+        $tests->add(new FromClass(substr($args[$i], 0, $p), substr($args[$i], $p + 2)));
       } else {
         $tests->add(new FromClass($args[$i]));
       }

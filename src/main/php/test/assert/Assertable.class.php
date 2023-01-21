@@ -71,7 +71,8 @@ class Assertable {
       }
       return $self;
     } else {
-      return new self($mapper($this->value, null));
+      $m= $mapper($this->value, null);
+      return new self($m instanceof Traversable ? iterator_to_array($m) : $m);
     }
   }
 
