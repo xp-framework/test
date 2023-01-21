@@ -22,6 +22,9 @@ class FromClass {
   /** Returns the class given */
   public function type(): Type { return $this->type; }
 
+  /** @return ?string */
+  public function selection() { return $this->selection; }
+
   /** @return iterable */
   public function groups() {
     yield new TestClass($this->type, $this->selection);

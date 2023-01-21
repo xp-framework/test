@@ -28,4 +28,10 @@ class FromClassTest {
     $fixture= new FromClass(self::class);
     Assert::equals([new TestClass(self::class)], iterator_to_array($fixture->groups()));
   }
+
+  #[Test, Values([null, 'can_create', 'can*'])]
+  public function selection($pattern) {
+    $fixture= new FromClass(self::class, $pattern);
+    Assert::equals($pattern, $fixture->selection());
+  }
 }
