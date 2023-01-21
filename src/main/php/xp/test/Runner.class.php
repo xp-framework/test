@@ -105,10 +105,10 @@ class Runner {
         $status= $metrics->count['failure'] > $before ? 'failure' : 'success';
         Console::writeLinef("\r> %s \033[37m%s\033[0m", $summary[$status], $group->name());
       } catch (FailAll $f) {
-        $failures[$f->getMessage()]= $f->getCause();
+        $failures[$f->origin]= $f->getCause();
         $metrics->count['failure']++;
         Console::writeLinef(
-          "\r> %s \033[37m%s\033[1;32;3m // Exception from %s\033[0m",
+          "\r> %s \033[37m%s\033[1;32;3m // %s\033[0m",
           $summary['stopped'],
           $group->name(),
           $f->getMessage()
