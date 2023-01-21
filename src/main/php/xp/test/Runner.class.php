@@ -50,6 +50,11 @@ class Runner {
       'failure' => "\033[31m⨯\033[0m",
       'skipped' => "\033[33m⦾\033[0m",
     ];
+    static $counts= [
+      'success' => "\033[32m%d succeeded\033[0m",
+      'failure' => "\033[31m%d failed\033[0m",
+      'skipped' => "\033[33m%d skipped\033[0m",
+    ];
 
     $timer= new Timer();
     $tests= new Tests();
@@ -139,12 +144,17 @@ class Runner {
     }
 
     // Print out summary of test run
+    $summary= [];
+    foreach (['success', 'skipped', 'failure'] as $metric) {
+      if ($metrics->count[$metric]) {
+        $summary[]= sprintf($counts[$metric], $metrics->count[$metric]);
+      }
+    }
+
     $rt= Runtime::getInstance();
     Console::writeLinef(
-      "\033[37mTest cases:\033[0m  \033[32m%d succeeded\033[0m, %d skipped, %d failed",
-      $metrics->count['success'],
-      $metrics->count['skipped'],
-      $metrics->count['failure']
+      "\033[37mTest cases:\033[0m  %s",
+      implode(', ', $summary)
     );
     Console::writeLinef(
       "\033[37mMemory used:\033[0m %.2f kB (%.2f kB peak)",
