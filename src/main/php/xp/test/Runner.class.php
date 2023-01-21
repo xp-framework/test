@@ -39,13 +39,13 @@ class Runner {
 
   public static function main($args) {
     static $progress= ['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷'];
-    static $summary= [
+    static $groups= [
       'success' => "\033[42;1;37m PASS \033[0m",
       'failure' => "\033[41;1;37m FAIL \033[0m",
       'stopped' => "\033[47;1;30m STOP \033[0m",
       'skipped' => "\033[43;1;37m SKIP \033[0m",
     ];
-    static $indicators= [
+    static $cases= [
       'success' => "\033[32m✓\033[0m",
       'failure' => "\033[31m⨯\033[0m",
       'skipped' => "\033[33m⦾\033[0m",
@@ -85,7 +85,7 @@ class Runner {
           $metrics->count['skipped']++;
           Console::writeLinef(
             "\r> %s \033[37m%s\033[1;32;3m // %s\033[0m\n",
-            $summary['skipped'],
+            $groups['skipped'],
             $group->name(),
             $prerequisite->requirement(false)
           );
@@ -109,13 +109,13 @@ class Runner {
         }
   
         $status= $metrics->count['failure'] > $before ? 'failure' : 'success';
-        Console::writeLinef("\r> %s \033[37m%s\033[0m", $summary[$status], $group->name());
+        Console::writeLinef("\r> %s \033[37m%s\033[0m", $groups[$status], $group->name());
       } catch (FailAll $f) {
         $failures[$f->origin]= $f->getCause();
         $metrics->count['failure']++;
         Console::writeLinef(
           "\r> %s \033[37m%s\033[1;32;3m // %s\033[0m",
-          $summary['stopped'],
+          $groups['stopped'],
           $group->name(),
           $f->getMessage()
         );
@@ -124,7 +124,7 @@ class Runner {
       // ...report test case summary
       foreach ($grouped as $outcome) {
         $kind= $outcome->kind();
-        Console::write('  ', $indicators[$kind], ' ', str_replace("\n", "\n    ", $outcome->test));
+        Console::write('  ', $cases[$kind], ' ', str_replace("\n", "\n    ", $outcome->test));
         switch ($kind) {
           case 'success': Console::writeLine(); break;
           case 'skipped': Console::writeLinef("\033[1;32;3m // Skip: %s\033[0m", $outcome->reason); break;
