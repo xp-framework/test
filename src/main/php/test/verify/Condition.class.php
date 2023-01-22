@@ -28,12 +28,12 @@ class Condition implements Verification {
    */
   public function assertions($context) {
     if ($this->assert instanceof Closure) {
-      $result= $this->assert->bindTo(null, $context ? $context->literal() : null)->__invoke();
+      $assertion= $this->assert->bindTo(null, $context ? $context->literal() : null);
     } else {
       $f= eval("return function() { return {$this->assert}; };");
-      $result= $f->bindTo(null, $context ? $context->literal() : null)->__invoke();
+      $assertion= $f->bindTo(null, $context ? $context->literal() : null);
     }
 
-    yield new Assertion($result, new Verify($this->assert));
+    yield new Assertion($assertion(), new Verify($this->assert));
   }
 }
