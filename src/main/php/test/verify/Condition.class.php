@@ -27,13 +27,14 @@ class Condition implements Verification {
    * @return iterable
    */
   public function assertions($context) {
-    if ($this->assert instanceof Closure) {
-      $assertion= $this->assert->bindTo(null, $context ? $context->literal() : null);
-    } else {
-      $f= eval("return function() { return {$this->assert}; };");
-      $assertion= $f->bindTo(null, $context ? $context->literal() : null);
-    }
+    $assertion= $this->assert instanceof Closure
+      ? $this->assert
+      : eval("return function() { return {$this->assert}; };")
+    ;
 
-    yield new Assertion($assertion(), new Verify($this->assert));
+    yield new Assertion(
+      $assertion->bindTo(null, $context ? $context->literal() : null)->__invoke(),
+      new Verify($this->assert)
+    );
   }
 }
