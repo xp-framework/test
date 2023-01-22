@@ -39,7 +39,7 @@ class TestClass {
       }
       $instance= $this->type->newInstance(...$pass);
     } catch (InvocationFailed $e) {
-      throw new FailAll($e->target()->compoundName(), $e->getCause());
+      throw new GroupFailed($e->target()->compoundName(), $e->getCause());
     }
 
     // Enumerate methods

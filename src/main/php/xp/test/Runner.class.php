@@ -2,7 +2,7 @@
 
 use lang\Runtime;
 use test\source\{FromClass, FromDirectory, FromFile, FromPackage};
-use test\{Tests, Metrics, FailAll};
+use test\{Tests, Metrics, GroupFailed};
 use util\Objects;
 use util\cmd\Console;
 use util\profiling\Timer;
@@ -112,7 +112,7 @@ class Runner {
   
         $status= $metrics->count['failure'] > $before ? 'failure' : 'success';
         Console::writeLinef("\r> %s \033[37m%s\033[0m", $groups[$status], $group->name());
-      } catch (FailAll $f) {
+      } catch (GroupFailed $f) {
         $failures[$f->origin]= $f->getCause();
         $metrics->count['failure']++;
         Console::writeLinef(
