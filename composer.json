@@ -10,7 +10,7 @@
     "xp-framework/reflection": "^2.7",
     "php" : ">=7.0.0"
   },
-  "bin": ["bin/xp.xp-framework.unittest.test"],
+  "bin": ["bin/xp.xp-framework.test"],
   "autoload" : {
     "files" : ["src/main/php/autoload.php"]
   }
