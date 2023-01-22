@@ -1,6 +1,6 @@
 <?php namespace test\assert;
 
-use Closure, Throwable, Traversable, ReflectionFunction;
+use Closure, Throwable, Traversable, ReflectionFunction, ReflectionMethod;
 use lang\{Type, IllegalArgumentException};
 use test\AssertionFailed;
 
@@ -42,12 +42,17 @@ class Assertable {
    * data structure. The given function recieves the value and returns
    * the mapped value as a new `Assertable`.
    *
-   * @param  function(mixed): mixed|function(mixed, int|string): mixed $mapper
+   * @param  array|string|function(mixed): mixed|function(mixed, int|string): mixed $mapper
    */
   public function mappedBy($mapper): self {
     try {
-      $r= new ReflectionFunction($mapper);
-      $mapper instanceof Closure || $mapper= $r->getClosure();
+      if (is_array($mapper)) {
+        $r= new ReflectionMethod(...$mapper);
+        $mapper= $r->getClosure($mapper[0]);
+      } else {
+        $r= new ReflectionFunction($mapper);
+        $mapper instanceof Closure || $mapper= $r->getClosure();
+      }
 
       // Do not pass keys to callables with only one required parameter.
       // This enables to use map with functions such as trim(), which
