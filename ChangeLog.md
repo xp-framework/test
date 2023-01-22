@@ -1,8 +1,11 @@
-Tests - ChangeLog
+ Tests - ChangeLog
 =================
 
 ## ?.?.? / ????-??-??
 
+* Added overall time to result metrics, supplementing the currently
+  reported time spent executing the test cases only
+  (@thekid)
 * Merged PR #5: Pass `[class.Name]::[pattern]` to execute only test cases
   matching the given pattern
   (@thekid)

@@ -57,6 +57,7 @@ class Runner {
     ];
 
     $timer= new Timer();
+    $overall= new Timer();
     $tests= new Tests();
     $metrics= new Metrics();
     for ($i= 0, $s= sizeof($args); $i < $s; $i++) {
@@ -75,6 +76,7 @@ class Runner {
       }
     }
 
+    $overall->start();
     $failures= [];
     foreach ($tests->groups() as $group) {
       Console::writef("\r> \033[44;1;37m RUN… \033[0m \033[37m%s\033[0m", $group->name());
@@ -137,6 +139,7 @@ class Runner {
       }
       Console::writeLine();
     }
+    $overall->stop();
 
     // ...finally, output all failures
     foreach ($failures as $location => $exception) {
@@ -162,8 +165,9 @@ class Runner {
       $rt->peakMemoryUsage() / 1000
     );
     Console::writeLinef(
-      "\033[37mTime taken:\033[0m  %.3f seconds",
-      $metrics->elapsed
+      "\033[37mTime taken:\033[0m  %.3f seconds (%.3f seconds overall)",
+      $metrics->elapsed,
+      $overall->elapsedTime()
     );
 
     return $metrics->count['failure'] ? 1 : 0;
