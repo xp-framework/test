@@ -4,7 +4,7 @@ use lang\reflection\{Type, InvocationFailed};
 use lang\{Reflection, XPClass, Throwable};
 use test\verify\Verification;
 
-class TestClass {
+class TestClass extends Group {
   private $type, $selection;
 
   /**
