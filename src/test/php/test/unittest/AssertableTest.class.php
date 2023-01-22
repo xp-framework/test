@@ -6,13 +6,14 @@ use test\{Assert, AssertionFailed, Expect, Test, Values};
 
 class AssertableTest {
 
-  private function values($value) {
-    return $value * 2;
-  }
+  private function instanceMapper(int $value): int { return $value * 2; }
+
+  private static function staticMapper(int $value): int { return $value * 2; }
 
   /** @return iterable */
   private function doubling() {
-    yield [[$this, 'values']];
+    yield [[$this, 'instanceMapper']];
+    yield [[self::class, 'staticMapper']];
     yield [function($v) { return $v * 2; }];
   }
 

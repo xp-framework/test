@@ -48,7 +48,7 @@ class Assertable {
     try {
       if (is_array($mapper)) {
         $r= new ReflectionMethod(...$mapper);
-        $mapper= $r->getClosure($mapper[0]);
+        $mapper= $r->getClosure(is_object($mapper[0]) ? $mapper[0] : null);
       } else {
         $r= new ReflectionFunction($mapper);
         $mapper instanceof Closure || $mapper= $r->getClosure();
