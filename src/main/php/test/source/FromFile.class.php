@@ -5,30 +5,35 @@ use lang\reflection\Type;
 use lang\{ClassLoader, Reflection, IllegalArgumentException};
 use test\execution\TestClass;
 
-class FromFile {
-  private $type;
+class FromFile extends Source {
+  private $path, $type;
 
   /** @param File|Path|string $arg */
   public function __construct($arg) {
     if ($arg instanceof File) {
-      $uri= $arg->getURI();
+      $this->path= $arg->getURI();
     } else {
-      $uri= realpath($arg);
+      $this->path= realpath($arg);
     }
 
-    if ($loader= ClassLoader::getDefault()->findUri($uri)) {
-      $this->type= Reflection::type($loader->loadUri($uri));
+    if ($loader= ClassLoader::getDefault()->findUri($this->path)) {
+      $this->type= $loader->loadUri($this->path);
       return;
     }
 
-    throw new IllegalArgumentException($arg.' is not in class path');
+    throw new IllegalArgumentException($this->path.' is not in class path');
   }
 
   /** Returns the type discovered from the file */
-  public function type(): Type { return $this->type; }
+  public function type(): Type { return Reflection::type($this->type); }
 
   /** @return iterable */
   public function groups() {
-    yield new TestClass($this->type);
+    yield new TestClass($this->type());
+  }
+
+  /** @return string */
+  public function toString() {
+    return nameof($this).'<'.$this->path.'>';
   }
 }

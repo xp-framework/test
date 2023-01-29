@@ -5,7 +5,7 @@ use lang\reflection\Type;
 use lang\{Reflection, XPClass};
 use test\execution\TestClass;
 
-class FromClass {
+class FromClass extends Source {
   private $type, $selection;
 
   /**
@@ -28,5 +28,10 @@ class FromClass {
   /** @return iterable */
   public function groups() {
     yield new TestClass($this->type, $this->selection);
+  }
+
+  /** @return string */
+  public function toString() {
+    return nameof($this).'<'.$this->type->name().($this->selection ? '::'.$this->selection : '').'>';
   }
 }

@@ -3,7 +3,7 @@
 use lang\reflection\Package;
 use test\execution\TestClass;
 
-class FromPackage {
+class FromPackage extends Source {
   private $package, $recursive;
 
   /**

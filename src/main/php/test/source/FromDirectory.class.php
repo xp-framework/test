@@ -4,7 +4,7 @@ use io\{Folder, Path};
 use lang\{ClassLoader, FileSystemClassLoader, IllegalArgumentException};
 use test\execution\TestClass;
 
-class FromDirectory {
+class FromDirectory extends Source {
   private $folder;
 
   /** @param Folder|Path|string $arg */
@@ -54,5 +54,10 @@ class FromDirectory {
       if ($class->isInterface() || $class->isTrait() || $class->getModifiers() & MODIFIER_ABSTRACT) continue;
       yield new TestClass($class);
     }
+  }
+
+  /** @return string */
+  public function toString() {
+    return nameof($this).'<'.$this->folder->getURI().'>';
   }
 }
