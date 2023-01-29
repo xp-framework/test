@@ -30,7 +30,7 @@ class Args implements Provider {
    * @param  Context $context
    * @return iterable
    */
-  public function values($context) {
+  public function values(Context $context) {
 
     // Select all arguments
     if (empty($this->select)) {

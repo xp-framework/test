@@ -10,6 +10,6 @@ interface Provider {
    * @param  Context $context
    * @return iterable
    */
-  public function values($context);
+  public function values(Context $context);
 
 }

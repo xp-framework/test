@@ -30,7 +30,7 @@ class Values implements Provider {
    * @param  Context $context
    * @return iterable
    */
-  public function values($context) {
+  public function values(Context $context) {
     return null === $this->from
       ? $this->list
       : $context->type->method($this->from)->invoke($context->instance, [], $context->type)
