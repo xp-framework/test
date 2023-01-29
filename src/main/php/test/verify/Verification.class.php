@@ -3,9 +3,9 @@
 interface Verification {
 
   /**
-   * Return assertions for a given context type
+   * Return assertions for a given context
    *
-   * @param  ?string $context
+   * @param  Context $context
    * @return iterable
    */
   public function assertions($context);

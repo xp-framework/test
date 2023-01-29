@@ -1,6 +1,5 @@
 <?php namespace test\verify;
 
-use lang\reflection\Type;
 use test\assert\{Assertion, Verify, Matches, RequiredVersion};
 
 class Runtime implements Verification {
@@ -22,7 +21,7 @@ class Runtime implements Verification {
   /**
    * Yields assertions to verify runtime OS / PHP
    *
-   * @param  ?Type $context
+   * @param  Context $context
    * @return iterable
    */
   public function assertions($context) {

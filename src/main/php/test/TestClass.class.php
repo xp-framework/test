@@ -29,15 +29,16 @@ class TestClass extends Group {
   }
 
   /** @return iterable */
-  public function tests() {
+  public function tests($arguments= []) {
+    $context= new Context($this->type, $arguments);
     try {
       $pass= [];
       foreach ($this->type->annotations()->all(Provider::class) as $provider) {
-        foreach ($provider->newInstance()->values($this->type) as $arguments) {
-          $pass[]= $arguments;
+        foreach ($provider->newInstance()->values($context) as $value) {
+          $pass[]= $value;
         }
       }
-      $instance= $this->type->newInstance(...$pass);
+      $context->instance= $this->type->newInstance(...$pass);
     } catch (InvocationFailed $e) {
       throw new GroupFailed($e->target()->compoundName(), $e->getCause());
     }
@@ -56,11 +57,11 @@ class TestClass extends Group {
         (null === $this->selection || fnmatch($this->selection, $method->name()))
       ) {
 
-        $case= new RunTest($method->name(), $method->closure($instance));
+        $case= new RunTest($method->name(), $method->closure($context->instance));
 
         // Check prerequisites
         foreach ($annotations->all(Verification::class) as $verify) {
-          foreach ($verify->newInstance()->assertions($this->type) as $prerequisite) {
+          foreach ($verify->newInstance()->assertions($context) as $prerequisite) {
             $case->verify($prerequisite);
           }
         }
@@ -73,7 +74,7 @@ class TestClass extends Group {
         // For each provider, create test case variations from the values it provides
         $variations= 0;
         foreach ($annotations->all(Provider::class) as $provider) {
-          foreach ($provider->newInstance()->values($this->type, $instance) as $arguments) {
+          foreach ($provider->newInstance()->values($context) as $arguments) {
             $cases[]= (clone $case)->passing($arguments);
             $variations++;
           }
@@ -86,13 +87,13 @@ class TestClass extends Group {
     // Run all @Before methods, then yield the test cases, then finalize
     // with the methods annotated with @After
     foreach ($before as $method) {
-      $method->invoke($instance, [], $instance);
+      $method->invoke($context->instance, [], $context->type);
     }
 
     yield from $cases;
 
     foreach ($after as $method) {
-      $method->invoke($instance, [], $instance);
+      $method->invoke($context->instance, [], $context->type);
     }
   }
 }
