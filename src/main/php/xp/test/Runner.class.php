@@ -65,6 +65,9 @@ class Runner {
       if ('--' === $args[$i]) {
         $pass= array_slice($args, $i + 1);
         break;
+      } else if (0 === strncmp($args[$i], '--', 2)) {
+        $pass= array_slice($args, $i);
+        break;
       } else if (is_dir($args[$i])) {
         $tests->add(new FromDirectory($args[$i]));
       } else if (is_file($args[$i])) {
