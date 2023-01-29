@@ -44,7 +44,7 @@ class TestClass extends Group {
     } catch (CannotInstantiate $e) {
       throw new GroupFailed($e->type()->name(), $e->getCause());
     } catch (Throwable $e) {
-      throw new GroupFailed($this->type->name(), $e);
+      throw new GroupFailed('providers', $e);
     }
 
     // Enumerate methods
