@@ -3,8 +3,8 @@
 use Throwable as Any;
 use lang\reflection\Type;
 use lang\{Throwable, Runnable};
-use test\Outcome;
 use test\outcome\{Succeeded, Skipped, Failed};
+use test\{Outcome, Prerequisite};
 use util\Objects;
 
 class RunTest implements Runnable {
