@@ -9,11 +9,13 @@ class Tests implements Value {
 
   private $sources;
 
+  /** Creates a tests instance with given sources */
   public function __construct(Source... $sources) {
     $this->sources= $sources;
   }
 
-  public function add(Source $source) {
+  /** Adds a source */
+  public function add(Source $source): self {
     $this->sources[]= $source;
     return $this;
   }
