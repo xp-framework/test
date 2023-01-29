@@ -1,5 +1,6 @@
 <?php namespace test;
 
+use test\execution\Context;
 use test\verify\Verification;
 
 class Ignore implements Verification, Prerequisite {
@@ -25,7 +26,7 @@ class Ignore implements Verification, Prerequisite {
    * @param  ?string $context
    * @return iterable
    */
-  public function assertions($context) {
+  public function assertions(Context $context) {
     yield $this;
   }
 }

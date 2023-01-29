@@ -1,6 +1,7 @@
 <?php namespace test\verify;
 
 use test\assert\{Assertion, Verify, Matches, RequiredVersion};
+use test\execution\Context;
 
 class Runtime implements Verification {
   private $os, $php, $extensions;
@@ -24,7 +25,7 @@ class Runtime implements Verification {
    * @param  Context $context
    * @return iterable
    */
-  public function assertions($context) {
+  public function assertions(Context $context) {
     null === $this->os || yield new Assertion(PHP_OS, new Matches('/'.$this->os.'/i'));
     null === $this->php || yield new Assertion(PHP_VERSION, new RequiredVersion('PHP', $this->php));
 

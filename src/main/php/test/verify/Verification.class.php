@@ -1,5 +1,7 @@
 <?php namespace test\verify;
 
+use test\execution\Context;
+
 interface Verification {
 
   /**
@@ -8,5 +10,5 @@ interface Verification {
    * @param  Context $context
    * @return iterable
    */
-  public function assertions($context);
+  public function assertions(Context $context);
 }

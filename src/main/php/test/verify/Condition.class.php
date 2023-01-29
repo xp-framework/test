@@ -2,6 +2,7 @@
 
 use Closure;
 use test\assert\{Assertion, Verify};
+use test\execution\Context;
 
 /**
  * Generic verification via `assert`.
@@ -25,7 +26,7 @@ class Condition implements Verification {
    * @param  Context $context
    * @return iterable
    */
-  public function assertions($context) {
+  public function assertions(Context $context) {
     $assertion= $this->assert instanceof Closure
       ? $this->assert
       : eval("return function() { return {$this->assert}; };")
