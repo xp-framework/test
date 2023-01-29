@@ -20,9 +20,10 @@ abstract class Group {
   /**
    * Yields tests in this group
    *
+   * @param  array<string> $arguments
    * @return iterable
    * @throws GroupFailed
    */
-  public abstract function tests();
+  public abstract function tests($arguments= []);
 
 }

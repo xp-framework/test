@@ -1,7 +1,6 @@
 <?php namespace test\verify;
 
 use Closure;
-use lang\reflection\Type;
 use test\assert\{Assertion, Verify};
 
 /**
@@ -23,7 +22,7 @@ class Condition implements Verification {
   /**
    * Return assertions for a given context type
    *
-   * @param  ?Type $context
+   * @param  Context $context
    * @return iterable
    */
   public function assertions($context) {
@@ -33,7 +32,7 @@ class Condition implements Verification {
     ;
 
     yield new Assertion(
-      $assertion->bindTo(null, $context ? $context->literal() : null)->__invoke(),
+      $assertion->bindTo(null, $context->type->literal())->__invoke(),
       new Verify($this->assert)
     );
   }

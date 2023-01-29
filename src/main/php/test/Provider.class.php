@@ -1,16 +1,13 @@
 <?php namespace test;
 
-use lang\reflection\Type;
-
 interface Provider {
 
   /**
    * Returns values
    *
-   * @param  Type $type
-   * @param  ?object $instance
+   * @param  Context $context
    * @return iterable
    */
-  public function values($type, $instance= null);
+  public function values($context);
 
 }

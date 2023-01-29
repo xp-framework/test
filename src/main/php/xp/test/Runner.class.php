@@ -60,8 +60,15 @@ class Runner {
     $overall= new Timer();
     $tests= new Tests();
     $metrics= new Metrics();
+    $pass= [];
     for ($i= 0, $s= sizeof($args); $i < $s; $i++) {
-      if (is_dir($args[$i])) {
+      if ('--' === $args[$i]) {
+        $pass= array_slice($args, $i + 1);
+        break;
+      } else if (0 === strncmp($args[$i], '--', 2)) {
+        $pass= array_slice($args, $i);
+        break;
+      } else if (is_dir($args[$i])) {
         $tests->add(new FromDirectory($args[$i]));
       } else if (is_file($args[$i])) {
         $tests->add(new FromFile($args[$i]));
@@ -100,7 +107,7 @@ class Runner {
       $grouped= [];
       $before= $metrics->count['failure'];
       try {
-        foreach ($group->tests() as $test) {
+        foreach ($group->tests($pass) as $test) {
           Console::writef("\r%s", $progress[$i++] ?? $progress[$i= 0]);
 
           $timer->start();

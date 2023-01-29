@@ -26,14 +26,13 @@ class Values implements Provider {
   /**
    * Returns values
    *
-   * @param  Type $type
-   * @param  ?object $instance
+   * @param  Context $context
    * @return iterable
    */
-  public function values($type, $instance= null) {
+  public function values($context) {
     return null === $this->from
       ? $this->list
-      : $type->method($this->from)->invoke($instance, [], $type)
+      : $context->type->method($this->from)->invoke($context->instance, [], $context->type)
     ;
   }
 }
