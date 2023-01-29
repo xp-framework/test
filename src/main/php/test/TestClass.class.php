@@ -1,7 +1,7 @@
 <?php namespace test;
 
-use lang\reflection\{Type, InvocationFailed};
-use lang\{Reflection, XPClass, Throwable};
+use lang\reflection\{CannotInstantiate, InvocationFailed, Type};
+use lang\{Reflection, Throwable, XPClass};
 use test\verify\Verification;
 
 class TestClass extends Group {
@@ -41,6 +41,10 @@ class TestClass extends Group {
       $context->instance= $this->type->newInstance(...$pass);
     } catch (InvocationFailed $e) {
       throw new GroupFailed($e->target()->compoundName(), $e->getCause());
+    } catch (CannotInstantiate $e) {
+      throw new GroupFailed($e->type()->name(), $e->getCause());
+    } catch (Throwable $e) {
+      throw new GroupFailed($this->type->name(), $e);
     }
 
     // Enumerate methods
