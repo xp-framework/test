@@ -31,7 +31,6 @@ class Args implements Provider {
    * @return iterable
    */
   public function values($context) {
-    var_dump($context);
 
     // Select all arguments
     if (empty($this->select)) {
