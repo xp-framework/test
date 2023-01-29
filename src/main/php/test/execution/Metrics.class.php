@@ -1,4 +1,6 @@
-<?php namespace test;
+<?php namespace test\execution;
+
+use test\Outcome;
 
 class Metrics {
   public $count= ['success' => 0, 'failure' => 0, 'skipped' => 0];

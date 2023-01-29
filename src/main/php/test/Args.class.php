@@ -1,6 +1,7 @@
 <?php namespace test;
 
 use lang\IllegalArgumentException;
+use test\execution\Context;
 
 /**
  * Selects command line arguments

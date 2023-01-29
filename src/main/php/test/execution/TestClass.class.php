@@ -1,8 +1,9 @@
-<?php namespace test;
+<?php namespace test\execution;
 
 use lang\reflection\{CannotInstantiate, InvocationFailed, Type};
 use lang\{Reflection, Throwable, XPClass};
 use test\verify\Verification;
+use test\{After, Before, Expect, Ignore, Provider, Test};
 
 class TestClass extends Group {
   private $type, $selection;

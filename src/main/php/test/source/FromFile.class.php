@@ -3,7 +3,7 @@
 use io\{File, Path};
 use lang\reflection\Type;
 use lang\{ClassLoader, Reflection, IllegalArgumentException};
-use test\TestClass;
+use test\execution\TestClass;
 
 class FromFile {
   private $type;

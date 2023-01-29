@@ -1,4 +1,4 @@
-<?php namespace test;
+<?php namespace test\execution;
 
 use lang\Runnable;
 use test\outcome\Skipped;

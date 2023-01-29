@@ -1,4 +1,4 @@
-<?php namespace test;
+<?php namespace test\execution;
 
 abstract class Group {
 

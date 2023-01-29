@@ -1,8 +1,8 @@
 <?php namespace xp\test;
 
 use lang\Runtime;
+use test\execution\{GroupFailed, Metrics, Tests};
 use test\source\{FromClass, FromDirectory, FromFile, FromPackage};
-use test\{Tests, Metrics, GroupFailed};
 use util\Objects;
 use util\cmd\Console;
 use util\profiling\Timer;

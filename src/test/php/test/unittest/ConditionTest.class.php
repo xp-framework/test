@@ -1,8 +1,9 @@
 <?php namespace test\unittest;
 
 use lang\Reflection;
+use test\execution\Context;
 use test\verify\Condition;
-use test\{Assert, Context, Test, Values};
+use test\{Assert, Test, Values};
 
 class ConditionTest {
 
