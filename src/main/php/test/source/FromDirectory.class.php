@@ -2,7 +2,7 @@
 
 use io\{Folder, Path};
 use lang\{ClassLoader, FileSystemClassLoader, IllegalArgumentException};
-use test\TestClass;
+use test\execution\TestClass;
 
 class FromDirectory {
   private $folder;

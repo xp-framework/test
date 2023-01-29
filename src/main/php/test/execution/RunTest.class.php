@@ -1,8 +1,9 @@
-<?php namespace test;
+<?php namespace test\execution;
 
 use Throwable as Any;
 use lang\reflection\Type;
 use lang\{Throwable, Runnable};
+use test\Outcome;
 use test\outcome\{Succeeded, Skipped, Failed};
 use util\Objects;
 

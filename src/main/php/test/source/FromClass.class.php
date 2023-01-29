@@ -3,7 +3,7 @@
 use ReflectionClass;
 use lang\reflection\Type;
 use lang\{Reflection, XPClass};
-use test\TestClass;
+use test\execution\TestClass;
 
 class FromClass {
   private $type, $selection;

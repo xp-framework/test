@@ -1,7 +1,7 @@
 <?php namespace test\source;
 
 use lang\reflection\Package;
-use test\TestClass;
+use test\execution\TestClass;
 
 class FromPackage {
   private $package, $recursive;

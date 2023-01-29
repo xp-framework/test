@@ -1,8 +1,9 @@
 <?php namespace test\unittest;
 
 use lang\{XPClass, Reflection};
+use test\execution\TestClass;
 use test\source\FromClass;
-use test\{Assert, Test, Values, TestClass};
+use test\{Assert, Test, Values};
 
 class FromClassTest {
 

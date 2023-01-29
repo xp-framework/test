@@ -1,5 +1,7 @@
 <?php namespace test;
 
+use test\execution\Context;
+
 interface Provider {
 
   /**
