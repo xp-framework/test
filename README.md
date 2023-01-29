@@ -124,6 +124,33 @@ The following verifications are included:
 * `Runtime(os: '^WIN', php: '^8.0', extensions: ['bcmath'])` - runtime verifications.
 * `Condition(assert: 'function_exists("random_int")')` - verify given expression in the context of the test class.
 
+Passing arguments to tests
+--------------------------
+Especially for integration tests, passing values like a connection string from the command line to the test class is important. Add the `Args` annotation to the class as follows:
+
+```php
+use test\Args;
+use com\mongodb\MongoConnection;
+
+#[Args('use')]
+class IntegrationTest {
+  private $conn;
+
+  public function __construct(string $dsn) {
+    $this->conn= new MongoConnection($dsn);
+  }
+
+  // ...shortened for brevity
+}
+```
+
+...then pass the arguments as follows:
+
+```bash
+$ xp test IntegrationTest --use=mongodb://locahost
+# ...
+```
+
 See also
 --------
 * [RFC #344: New testing library](https://github.com/xp-framework/rfc/issues/344)
