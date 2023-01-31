@@ -1,11 +1,11 @@
-<?php namespace test\execution;
+<?php namespace test\source;
 
 use lang\Value;
 use test\source\Source;
 use util\{Comparison, Objects};
 
-/** @test test.unittest.TestsTest */
-class Tests implements Value {
+/** @test test.unittest.SourcesTest */
+class Sources implements Value {
   use Comparison;
 
   private $sources;

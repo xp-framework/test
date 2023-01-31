@@ -1,8 +1,8 @@
 <?php namespace xp\test;
 
 use lang\{Runtime, XPClass};
-use test\execution\{GroupFailed, Metrics, Tests};
-use test\source\{FromClass, FromDirectory, FromFile, FromPackage};
+use test\execution\{GroupFailed, Metrics};
+use test\source\{Sources, FromClass, FromDirectory, FromFile, FromPackage};
 use util\Objects;
 use util\cmd\Console;
 use util\profiling\Timer;
@@ -58,7 +58,7 @@ class Runner {
 
     $timer= new Timer();
     $overall= new Timer();
-    $tests= new Tests();
+    $sources= new Sources();
     $metrics= new Metrics();
     $pass= [];
     for ($i= 0, $s= sizeof($args); $i < $s; $i++) {
@@ -69,23 +69,23 @@ class Runner {
         $pass= array_slice($args, $i);
         break;
       } else if (is_dir($args[$i])) {
-        $tests->add(new FromDirectory($args[$i]));
+        $sources->add(new FromDirectory($args[$i]));
       } else if (is_file($args[$i])) {
-        $tests->add(new FromFile($args[$i]));
+        $sources->add(new FromFile($args[$i]));
       } else if (0 === substr_compare($args[$i], '.**', -3, 3)) {
-        $tests->add(new FromPackage(substr($args[$i], 0, -3), true));
+        $sources->add(new FromPackage(substr($args[$i], 0, -3), true));
       } else if (0 === substr_compare($args[$i], '.*', -2, 2)) {
-        $tests->add(new FromPackage(substr($args[$i], 0, -2), false));
+        $sources->add(new FromPackage(substr($args[$i], 0, -2), false));
       } else if (false !== ($p= strpos($args[$i], '::'))) {
-        $tests->add(new FromClass(substr($args[$i], 0, $p), substr($args[$i], $p + 2)));
+        $sources->add(new FromClass(substr($args[$i], 0, $p), substr($args[$i], $p + 2)));
       } else {
-        $tests->add(new FromClass($args[$i]));
+        $sources->add(new FromClass($args[$i]));
       }
     }
 
     $overall->start();
     $failures= [];
-    foreach ($tests->groups() as $group) {
+    foreach ($sources->groups() as $group) {
       Console::writef("\r> \033[44;1;37m RUN… \033[0m \033[37m%s\033[0m", $group->name());
 
       // Check group prerequisites
@@ -163,7 +163,7 @@ class Runner {
     if ($metrics->empty()) {
       Console::writeLine("\033[33m@", (new XPClass(self::class))->getClassLoader(), "\033[0m");
       Console::writeLine("\033[41;1;37m ERROR \033[0;1;37m No tests run\033[0m\n");
-      Console::writeLine('Supplied sources: ', $tests);
+      Console::writeLine('Supplied sources: ', $sources);
       return 2;
     }
 
