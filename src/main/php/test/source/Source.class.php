@@ -7,5 +7,5 @@ abstract class Source implements Value {
   use Comparison;
 
   /** @return string */
-  public abstract function toString();
+  public function toString() { return nameof($this); }
 }

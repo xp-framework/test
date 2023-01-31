@@ -39,7 +39,7 @@ class FromDirectory extends Source {
     foreach ($folder->entries() as $entry) {
       if ($entry->isFolder()) {
         yield from $this->testClassesIn($cl, $entry->asFolder());
-      } else if (strstr($entry->name(), 'Test')) {
+      } else if (($p= strpos($entry->name(), '.')) && 0 === substr_compare($entry->name(), 'Test', $p - 4, 4)) {
         $uri= $entry->asURI();
         if ($loader= $cl->findUri($uri)) {
           yield $loader->loadUri($uri);
