@@ -163,7 +163,7 @@ class Runner {
     if ($metrics->empty()) {
       Console::writeLine("\033[33m@", (new XPClass(self::class))->getClassLoader(), "\033[0m");
       Console::writeLine("\033[41;1;37m ERROR \033[0;1;37m No tests run\033[0m\n");
-      Console::writeLine($tests);
+      Console::writeLine('Supplied sources: ', $tests);
       return 2;
     }
 

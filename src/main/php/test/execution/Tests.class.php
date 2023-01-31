@@ -33,6 +33,8 @@ class Tests implements Value {
 
   /** @return string */
   public function toString() {
+    if (sizeof($this->sources) < 2) return nameof($this).Objects::stringOf($this->sources);
+
     $s= nameof($this)."@[\n";
     foreach ($this->sources as $source) {
       $s.= '  '.Objects::stringOf($source, '  ')."\n";
