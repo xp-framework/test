@@ -4,6 +4,7 @@ use lang\Value;
 use test\source\Source;
 use util\{Comparison, Objects};
 
+/** @test test.unittest.TestsTest */
 class Tests implements Value {
   use Comparison;
 
@@ -13,6 +14,9 @@ class Tests implements Value {
   public function __construct(Source... $sources) {
     $this->sources= $sources;
   }
+
+  /** @return int */
+  public function size() { return sizeof($this->sources); }
 
   /** Adds a source */
   public function add(Source $source): self {
