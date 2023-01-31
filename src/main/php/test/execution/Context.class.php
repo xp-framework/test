@@ -10,4 +10,7 @@ class Context {
     $this->type= $type;
     $this->arguments= $arguments;
   }
+
+  /** @return void */
+  public function pass(array $arguments) { $this->arguments= $arguments; }
 }

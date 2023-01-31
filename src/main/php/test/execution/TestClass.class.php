@@ -6,7 +6,7 @@ use test\verify\Verification;
 use test\{After, Before, Expect, Ignore, Provider, Test};
 
 class TestClass extends Group {
-  private $type, $selection;
+  private $context, $selection;
 
   /**
    * Creates an instance for a given class
@@ -15,32 +15,31 @@ class TestClass extends Group {
    * @param ?string $selection
    */
   public function __construct($arg, $selection= null) {
-    $this->type= $arg instanceof Type ? $arg : Reflection::type($arg);
+    $this->context= new Context($arg instanceof Type ? $arg : Reflection::type($arg));
     $this->selection= $selection;
   }
 
   /** @return string */
-  public function name() { return $this->type->name(); }
+  public function name() { return $this->context->type->name(); }
 
   /** @return iterable */
   public function prerequisites() {
-    $context= new Context($this->type);
-    foreach ($this->type->annotations()->all(Verification::class) as $verify) {
-      yield from $verify->newInstance()->assertions($context);
+    foreach ($this->context->type->annotations()->all(Verification::class) as $verify) {
+      yield from $verify->newInstance()->assertions($this->context);
     }
   }
 
   /** @return iterable */
   public function tests($arguments= []) {
-    $context= new Context($this->type, $arguments);
+    $this->context->pass($arguments);
     try {
       $pass= [];
-      foreach ($this->type->annotations()->all(Provider::class) as $provider) {
-        foreach ($provider->newInstance()->values($context) as $value) {
+      foreach ($this->context->type->annotations()->all(Provider::class) as $provider) {
+        foreach ($provider->newInstance()->values($this->context) as $value) {
           $pass[]= $value;
         }
       }
-      $context->instance= $this->type->newInstance(...$pass);
+      $this->context->instance= $this->context->type->newInstance(...$pass);
     } catch (InvocationFailed $e) {
       throw new GroupFailed($e->target()->compoundName(), $e->getCause());
     } catch (CannotInstantiate $e) {
@@ -51,7 +50,7 @@ class TestClass extends Group {
 
     // Enumerate methods
     $before= $after= $cases= [];
-    foreach ($this->type->methods() as $method) {
+    foreach ($this->context->type->methods() as $method) {
       $annotations= $method->annotations();
 
       if ($annotations->provides(Before::class)) {
@@ -63,11 +62,11 @@ class TestClass extends Group {
         (null === $this->selection || fnmatch($this->selection, $method->name()))
       ) {
 
-        $case= new RunTest($method->name(), $method->closure($context->instance));
+        $case= new RunTest($method->name(), $method->closure($this->context->instance));
 
         // Check prerequisites
         foreach ($annotations->all(Verification::class) as $verify) {
-          foreach ($verify->newInstance()->assertions($context) as $prerequisite) {
+          foreach ($verify->newInstance()->assertions($this->context) as $prerequisite) {
             $case->verify($prerequisite);
           }
         }
@@ -80,7 +79,7 @@ class TestClass extends Group {
         // For each provider, create test case variations from the values it provides
         $variations= 0;
         foreach ($annotations->all(Provider::class) as $provider) {
-          foreach ($provider->newInstance()->values($context) as $arguments) {
+          foreach ($provider->newInstance()->values($this->context) as $arguments) {
             $cases[]= (clone $case)->passing($arguments);
             $variations++;
           }
@@ -93,13 +92,13 @@ class TestClass extends Group {
     // Run all @Before methods, then yield the test cases, then finalize
     // with the methods annotated with @After
     foreach ($before as $method) {
-      $method->invoke($context->instance, [], $context->type);
+      $method->invoke($this->context->instance, [], $this->context->type);
     }
 
     yield from $cases;
 
     foreach ($after as $method) {
-      $method->invoke($context->instance, [], $context->type);
+      $method->invoke($this->context->instance, [], $this->context->type);
     }
   }
 }
