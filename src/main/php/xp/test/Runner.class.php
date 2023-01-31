@@ -103,22 +103,33 @@ class Runner {
       }
 
       // Run tests in this group...
-      $i= 0;
       $grouped= [];
       $before= $metrics->count['failure'];
       try {
+        $run= $p= 0;
         foreach ($group->tests($pass) as $test) {
-          Console::writef("\r%s", $progress[$i++] ?? $progress[$i= 0]);
+          Console::writef("\r%s", $progress[$p++] ?? $progress[$p= 0]);
 
           $timer->start();
           $outcome= $test->run();
           $timer->stop();
 
           $grouped[]= $metrics->record($outcome, $timer->elapsedTime());
+          $run++;
         }
-  
-        $status= $metrics->count['failure'] > $before ? 'failure' : 'success';
-        Console::writeLinef("\r> %s \033[37m%s\033[0m", $groups[$status], $group->name());
+
+        if ($run) {
+          $status= $metrics->count['failure'] > $before ? 'failure' : 'success';
+          Console::writeLinef("\r> %s \033[37m%s\033[0m", $groups[$status], $group->name());
+        } else {
+          $metrics->count['skipped']++;
+          Console::writeLinef(
+            "\r> %s \033[37m%s\033[1;32;3m // %s\033[0m",
+            $groups['skipped'],
+            $group->name(),
+            'No test cases declared in this group'
+          );
+        }
       } catch (GroupFailed $f) {
         $failures[$f->origin]= $f->getCause();
         $metrics->count['failure']++;
