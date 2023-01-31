@@ -38,4 +38,9 @@ class FromPackage extends Source {
       if ($type->instantiable() && 0 === substr_compare($type->name(), 'Test', -4, 4)) yield new TestClass($type);
     }
   }
+
+  /** @return string */
+  public function toString() {
+    return nameof($this).'<'.$this->package->name().($this->recursive ? '.**' : '.*').'>';
+  }
 }
