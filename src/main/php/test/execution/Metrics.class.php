@@ -11,4 +11,9 @@ class Metrics {
     $this->elapsed+= $elapsed;
     return $outcome;
   }
+
+  /** Returns whether no tests were run */
+  public function empty(): bool {
+    return 0 === array_sum($this->count);
+  }
 }

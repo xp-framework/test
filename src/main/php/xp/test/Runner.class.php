@@ -1,6 +1,6 @@
 <?php namespace xp\test;
 
-use lang\Runtime;
+use lang\{Runtime, XPClass};
 use test\execution\{GroupFailed, Metrics, Tests};
 use test\source\{FromClass, FromDirectory, FromFile, FromPackage};
 use util\Objects;
@@ -158,6 +158,14 @@ class Runner {
       Console::writeLine();
     }
     $overall->stop();
+
+    // Check if any tests were run
+    if ($metrics->empty()) {
+      Console::writeLine("\033[33m@", (new XPClass(self::class))->getClassLoader(), "\033[0m");
+      Console::writeLine("\033[41;1;37m ERROR \033[0;1;37m No tests run\033[0m\n");
+      Console::writeLine($tests);
+      return 2;
+    }
 
     // ...finally, output all failures
     foreach ($failures as $location => $exception) {
