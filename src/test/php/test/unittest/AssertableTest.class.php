@@ -67,6 +67,15 @@ class AssertableTest {
     Assert::equals(new Assertable([2, 4]), (new Assertable($f()))->mappedBy($mapper));
   }
 
+  #[Test, Values(from: 'doubling')]
+  public function map_traversable_with_yield_from($mapper) {
+    $f= function() {
+      yield from [1, 2];
+      yield 3;
+    };
+    Assert::equals(new Assertable([2, 4, 6]), (new Assertable($f()))->mappedBy($mapper));
+  }
+
   #[Test]
   public function map_can_transform_keys_via_yield() {
     Assert::equals(
