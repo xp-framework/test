@@ -24,8 +24,9 @@ class TestClass extends Group {
 
   /** @return iterable */
   public function prerequisites() {
+    $context= new Context($this->type);
     foreach ($this->type->annotations()->all(Verification::class) as $verify) {
-      yield from $verify->newInstance()->assertions($this->type);
+      yield from $verify->newInstance()->assertions($context);
     }
   }
 
