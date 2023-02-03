@@ -61,7 +61,6 @@ class TestClass extends Group {
         $annotations->provides(Test::class) &&
         (null === $this->selection || fnmatch($this->selection, $method->name()))
       ) {
-
         $case= new RunTest($method->name(), $method->closure($this->context->instance));
 
         // Check prerequisites
@@ -77,15 +76,17 @@ class TestClass extends Group {
         }
 
         // For each provider, create test case variations from the values it provides
-        $variations= 0;
-        foreach ($annotations->all(Provider::class) as $provider) {
-          foreach ($provider->newInstance()->values($this->context) as $arguments) {
-            $cases[]= (clone $case)->passing($arguments);
-            $variations++;
-          }
+        $provider= null;
+        foreach ($annotations->all(Provider::class) as $annotation) {
+          $provider= $annotation->newInstance();
+          $cases[]= function() use($case, $provider) {
+            foreach ($provider->values($this->context) as $arguments) {
+              yield (clone $case)->passing($arguments);
+            }
+          };
         }
 
-        $variations || $cases[]= $case;
+        $provider || $cases[]= function() use($case) { yield $case; };
       }
     }
 
@@ -95,10 +96,16 @@ class TestClass extends Group {
       $method->invoke($this->context->instance, [], $this->context->type);
     }
 
-    yield from $cases;
+    foreach ($cases as $variations) {
+      yield from $variations();
+    }
 
     foreach ($after as $method) {
-      $method->invoke($this->context->instance, [], $this->context->type);
+      try {
+        $method->invoke($this->context->instance, [], $this->context->type);
+      } catch (InvocationFailed $e) {
+        $e->printStackTrace();
+      }
     }
   }
 }
