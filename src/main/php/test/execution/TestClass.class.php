@@ -72,7 +72,7 @@ class TestClass extends Group {
 
         // Check expected exceptions
         if ($expect= $annotations->type(Expect::class)) {
-          $case->expecting(Reflection::type($expect->argument('class') ?? $expect->argument(0)));
+          $case->expecting($expect->newInstance());
         }
 
         // For each provider, create test case variations from the values it provides

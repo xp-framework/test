@@ -4,13 +4,13 @@ use Throwable as Any;
 use lang\reflection\Type;
 use lang\{Throwable, Runnable};
 use test\outcome\{Succeeded, Skipped, Failed};
-use test\{Outcome, Prerequisite};
+use test\{Expect, Outcome, Prerequisite};
 use util\Objects;
 
 class RunTest implements Runnable {
   private $name, $run;
   private $prerequisites= [];
-  private $expecting= null;
+  private $expectation= null;
   private $arguments= [];
 
   public function __construct(string $name, callable $run) {
@@ -33,14 +33,13 @@ class RunTest implements Runnable {
   }
 
   /**
-   * Sets an expected exception type
+   * Sets an expected exception
    *
-   * @param  Type $type
-   * @param  ?string $message
+   * @param  Expect $expectation
    * @return self
    */
-  public function expecting(Type $type, $message= null) {
-    $this->expecting= [$type, $message];
+  public function expecting(Expect $expectation) {
+    $this->expectation= $expectation;
     return $this;
   }
 
@@ -69,9 +68,8 @@ class RunTest implements Runnable {
       return new Succeeded($this->name);
     } catch (Any $e) {
       $t= Throwable::wrap($e);
-      if (list($type, $message)= $this->expecting) {
-        if ($type->isInstance($t)) return new Succeeded($this->name);
-      }
+      if ($this->expectation && $this->expectation->metBy($t)) return new Succeeded($this->name);
+
       return new Failed($this->name, $t);
     }
   }
