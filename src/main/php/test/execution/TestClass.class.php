@@ -49,7 +49,7 @@ class TestClass extends Group {
     }
 
     // Enumerate methods
-    $before= $after= $cases= [];
+    $before= $after= $execute= [];
     foreach ($this->context->type->methods() as $method) {
       $annotations= $method->annotations();
 
@@ -79,14 +79,14 @@ class TestClass extends Group {
         $provider= null;
         foreach ($annotations->all(Provider::class) as $annotation) {
           $provider= $annotation->newInstance();
-          $cases[]= function() use($case, $provider) {
+          $execute[]= function() use($case, $provider) {
             foreach ($provider->values($this->context) as $arguments) {
               yield (clone $case)->passing($arguments);
             }
           };
         }
 
-        $provider || $cases[]= function() use($case) { yield $case; };
+        $provider || $execute[]= function() use($case) { yield $case; };
       }
     }
 
@@ -96,7 +96,7 @@ class TestClass extends Group {
       $method->invoke($this->context->instance, [], $this->context->type);
     }
 
-    foreach ($cases as $variations) {
+    foreach ($execute as $variations) {
       yield from $variations();
     }
 
