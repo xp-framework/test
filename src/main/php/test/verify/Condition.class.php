@@ -29,11 +29,11 @@ class Condition implements Verification {
   public function assertions(Context $context) {
     $assertion= $this->assert instanceof Closure
       ? $this->assert
-      : eval("return function() { return {$this->assert}; };")
+      : $context->type->evaluate("fn() => {$this->assert};")
     ;
 
     yield new Assertion(
-      $assertion->bindTo(null, $context->type->literal())->__invoke(),
+      $assertion->bindTo($context->instance, $context->type->literal())->__invoke(),
       new Verify($this->assert)
     );
   }
