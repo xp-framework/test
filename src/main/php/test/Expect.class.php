@@ -37,4 +37,16 @@ class Expect {
       return $instance && $this->message === $t->getMessage();
     }
   }
+
+  /** @return string */
+  public function pattern() {
+    $pattern= strtr($this->class, '\\', '.');
+    if (null === $this->message) {
+      return $pattern;
+    } else if ('/' === ($this->message[0] ?? '')) {
+      return "{$pattern}({$this->message})";
+    } else {
+      return "{$pattern}('{$this->message}'')";
+    }
+  }
 }

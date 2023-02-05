@@ -149,8 +149,8 @@ class Runner {
           case 'success': Console::writeLine(); break;
           case 'skipped': Console::writeLinef("\033[1;32;3m // Skip: %s\033[0m", $outcome->reason); break;
           case 'failure': {
-            Console::writeLinef("\033[1;32;3m // Fail: %s\033[0m", $outcome->cause->getMessage());
-            $failures[$group->name().'::'.$outcome->test]= $outcome->cause;
+            Console::writeLinef("\033[1;32;3m // Fail: %s\033[0m", $outcome->reason);
+            $failures[$group->name().'::'.$outcome->test]= $outcome;
             break;
           }
         }
@@ -168,8 +168,13 @@ class Runner {
     }
 
     // ...finally, output all failures
-    foreach ($failures as $location => $exception) {
-      Console::writeLinef("\033[31m⨯ %s\033[0m\n  %s\n", $location, Objects::stringOf($exception, '  '));
+    foreach ($failures as $location => $failure) {
+      Console::writeLinef(
+        "\033[31m⨯ %s\033[0m\n  \033[37;1m%s\033[0m\n%s\n",
+        $location,
+        $failure->reason,
+        $failure->trace('    ')
+      );
     }
 
     // Print out summary of test run
