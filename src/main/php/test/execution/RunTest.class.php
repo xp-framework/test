@@ -4,7 +4,7 @@ use Throwable as Any;
 use lang\reflection\Type;
 use lang\{Throwable, Runnable};
 use test\outcome\{Succeeded, Skipped, Failed};
-use test\{Expect, Outcome, Prerequisite};
+use test\{AssertionFailed, Expect, Outcome, Prerequisite};
 use util\Objects;
 
 class RunTest implements Runnable {
@@ -65,12 +65,23 @@ class RunTest implements Runnable {
     \xp::gc();
     try {
       ($this->run)(...$this->arguments);
-      return new Succeeded($this->name);
+
+      if (null === $this->expectation) {
+        return new Succeeded($this->name);
+      } else {
+        return new Failed($this->name, 'Did not catch expected '.$this->expectation->pattern(), null);
+      }
     } catch (Any $e) {
       $t= Throwable::wrap($e);
-      if ($this->expectation && $this->expectation->metBy($t)) return new Succeeded($this->name);
 
-      return new Failed($this->name, $t);
+      if (null === $this->expectation) {
+        $reason= $t instanceof AssertionFailed ? $t->getMessage() : 'Unexpected '.lcfirst($t->compoundMessage());
+        return new Failed($this->name, $reason, $t);
+      } else if (!$this->expectation->metBy($t)) {
+        return new Failed($this->name, 'Did not catch expected '.$this->expectation->pattern(), $t);
+      } else {
+        return new Succeeded($this->name);
+      }
     }
   }
 }
