@@ -1,6 +1,7 @@
 <?php namespace test\execution;
 
 use lang\Runnable;
+use test\Outcome;
 use test\outcome\Skipped;
 
 class SkipTest implements Runnable {
