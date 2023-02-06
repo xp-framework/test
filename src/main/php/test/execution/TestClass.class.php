@@ -6,6 +6,8 @@ use test\verify\Verification;
 use test\{After, Before, Expect, Ignore, Provider, Test};
 
 class TestClass extends Group {
+  const ONCE= [[]];
+
   private $context, $selection;
 
   /**
@@ -61,12 +63,12 @@ class TestClass extends Group {
         $annotations->provides(Test::class) &&
         (null === $this->selection || fnmatch($this->selection, $method->name()))
       ) {
-        $case= new RunTest($method->name(), $method->closure($this->context->instance));
+        $case= new TestCase($method->name(), $method->closure($this->context->instance));
 
         // Check prerequisites
         foreach ($annotations->all(Verification::class) as $verify) {
           foreach ($verify->newInstance()->assertions($this->context) as $prerequisite) {
-            $case->verify($prerequisite);
+            $case->verifying($prerequisite);
           }
         }
 
@@ -77,16 +79,12 @@ class TestClass extends Group {
 
         // For each provider, create test case variations from the values it provides
         $provider= null;
-        foreach ($annotations->all(Provider::class) as $annotation) {
+        foreach ($annotations->all(Provider::class) as $i => $annotation) {
           $provider= $annotation->newInstance();
-          $execute[]= (function() use($case, $provider) {
-            foreach ($provider->values($this->context) as $arguments) {
-              yield (clone $case)->passing($arguments);
-            }
-          })();
+          $execute[]= [$case, $provider->values($this->context)];
         }
 
-        $provider || $execute[]= [$case];
+        $provider || $execute[]= [$case, self::ONCE];
       }
     }
 
@@ -96,8 +94,16 @@ class TestClass extends Group {
       $method->invoke($this->context->instance, [], $this->context->type);
     }
 
-    foreach ($execute as $cases) {
-      yield from $cases;
+    foreach ($execute as list($case, $iterations)) {
+      foreach ($case->prerequisites() as $prerequisite) {
+        if ($prerequisite->verify()) continue;
+        yield new SkipTest($case->name(), $prerequisite->requirement(false));
+        continue 2;
+      }
+
+      foreach ($iterations as $arguments) {
+        yield new RunTest($case, $arguments);
+      }
     }
 
     foreach ($after as $method) {
