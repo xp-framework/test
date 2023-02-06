@@ -6,8 +6,6 @@ use test\verify\Verification;
 use test\{After, Before, Expect, Ignore, Provider, Test};
 
 class TestClass extends Group {
-  const ONCE= [[]];
-
   private $context, $selection;
 
   /**
@@ -81,10 +79,10 @@ class TestClass extends Group {
         $provider= null;
         foreach ($annotations->all(Provider::class) as $i => $annotation) {
           $provider= $annotation->newInstance();
-          $execute[]= [$case, $provider->values($this->context)];
+          $execute[]= new Provided($case, $provider->values($this->context));
         }
 
-        $provider || $execute[]= [$case, self::ONCE];
+        $provider || $execute[]= new Once($case);
       }
     }
 
@@ -94,16 +92,14 @@ class TestClass extends Group {
       $method->invoke($this->context->instance, [], $this->context->type);
     }
 
-    foreach ($execute as list($case, $iterations)) {
-      foreach ($case->prerequisites() as $prerequisite) {
+    foreach ($execute as $target) {
+      foreach ($target->case->prerequisites() as $prerequisite) {
         if ($prerequisite->verify()) continue;
         yield new SkipTest($case->name(), $prerequisite->requirement(false));
         continue 2;
       }
 
-      foreach ($iterations as $arguments) {
-        yield new RunTest($case, $arguments);
-      }
+      yield from $target->cases();
     }
 
     foreach ($after as $method) {

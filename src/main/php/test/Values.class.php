@@ -31,12 +31,9 @@ class Values implements Provider {
    * @return iterable
    */
   public function values(Context $context) {
-    $it= null === $this->from
+    return null === $this->from
       ? $this->list
       : $context->type->method($this->from)->invoke($context->instance, [], $context->type)
     ;
-    foreach ($it as $arguments) {
-      yield is_array($arguments) ? $arguments : [$arguments];
-    }
   }
 }
