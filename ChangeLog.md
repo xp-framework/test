@@ -3,6 +3,8 @@
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #9: Implement checking for expected exceptions' messages
+  (@thekid)
 * Merged PR #7: Implement passing command line arguments via `#[Args]`
   (@thekid)
 * Added overall time to result metrics, supplementing the currently
