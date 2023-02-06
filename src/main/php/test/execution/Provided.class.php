@@ -15,7 +15,7 @@ class Provided {
   }
 
   /** @return iterable */
-  public function cases() {
+  public function runnables() {
     foreach ($this->provider as $arguments) {
       yield new RunTest($this->case, is_array($arguments) ? $arguments : [$arguments]);
     }

@@ -95,11 +95,11 @@ class TestClass extends Group {
     foreach ($execute as $target) {
       foreach ($target->case->prerequisites() as $prerequisite) {
         if ($prerequisite->verify()) continue;
-        yield new SkipTest($case->name(), $prerequisite->requirement(false));
+        yield new SkipTest($target->case->name(), $prerequisite->requirement(false));
         continue 2;
       }
 
-      yield from $target->cases();
+      yield from $target->runnables();
     }
 
     foreach ($after as $method) {
