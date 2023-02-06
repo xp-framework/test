@@ -88,8 +88,12 @@ class TestClass extends Group {
 
     // Run all @Before methods, then yield the test cases, then finalize
     // with the methods annotated with @After
-    foreach ($before as $method) {
-      $method->invoke($this->context->instance, [], $this->context->type);
+    try {
+      foreach ($before as $method) {
+        $method->invoke($this->context->instance, [], $this->context->type);
+      }
+    } catch (InvocationFailed $e) {
+      throw new GroupFailed($e->target()->compoundName(), $e->getCause());
     }
 
     foreach ($execute as $run) {
