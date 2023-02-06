@@ -7,5 +7,5 @@ class Once {
   public function __construct($case) { $this->case= $case; }
 
   /** @return iterable */
-  public function runnables() { return [new RunTest($this->case, [])]; }
+  public function targets() { return [new RunTest($this->case, [])]; }
 }

@@ -92,14 +92,14 @@ class TestClass extends Group {
       $method->invoke($this->context->instance, [], $this->context->type);
     }
 
-    foreach ($execute as $target) {
-      foreach ($target->case->prerequisites() as $prerequisite) {
+    foreach ($execute as $run) {
+      foreach ($run->case->prerequisites() as $prerequisite) {
         if ($prerequisite->verify()) continue;
-        yield new SkipTest($target->case->name(), $prerequisite->requirement(false));
+        yield new SkipTest($run->case->name(), $prerequisite->requirement(false));
         continue 2;
       }
 
-      yield from $target->runnables();
+      yield from $run->targets();
     }
 
     foreach ($after as $method) {
