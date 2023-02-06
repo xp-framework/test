@@ -3,6 +3,9 @@
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #12: Fix errors occuring during setup not being correctly
+  reported (e.g. when exceptions are raised inside `#[Before]`).
+  (@thekid)
 * Merged PR #11: Only verify parameterized test cases' prerequisites
   once, resulting in a small performance improvement. See issue #10
   (@thekid)
