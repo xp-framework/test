@@ -131,7 +131,7 @@ class Runner {
           );
         }
       } catch (GroupFailed $f) {
-        $failures[$f->origin]= $f->getCause();
+        $failures[$f->origin]= $f->failure();
         $metrics->count['failure']++;
         Console::writeLinef(
           "\r> %s \033[37m%s\033[1;32;3m // %s\033[0m",
