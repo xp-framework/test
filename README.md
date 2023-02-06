@@ -65,6 +65,12 @@ class CalculatorTest {
 }
 ```
 
+To check the expected exceptions' messages, use the following:
+
+* Any message: `Expect(DivisionByZero::class)`
+* Exact message: `Expect(DivisionByZero::class, 'Division by zero')`
+* Message matching regular expression: `Expect(DivisionByZero::class, '/Division by (0|zero)/i')`
+
 Value-driven tests
 ------------------
 To keep test code short and concise, tests may be value-driven. Values can be provided either directly inline:
