@@ -27,7 +27,7 @@ class TestCase {
   public function prerequisites() { return $this->prerequisites; }
 
   /**
-   * Sets an expected exception type
+   * Verifies a given prerequisite
    *
    * @param  Prerequisite $prerequisite
    * @return self
@@ -48,8 +48,13 @@ class TestCase {
     return $this;
   }
 
-  /** Runs this test case and returns its outcome */
-  public function run($arguments= []): Outcome {
+  /**
+   * Runs this test case and returns its outcome
+   *
+   * @param  array<mixed> $arguments
+   * @return Outcome
+   */
+  public function run($arguments= []) {
     \xp::gc();
     try {
       if ($arguments) {
