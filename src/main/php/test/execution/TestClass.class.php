@@ -49,7 +49,7 @@ class TestClass extends Group {
     }
 
     // Enumerate methods
-    $before= $after= $cases= [];
+    $before= $after= $execute= [];
     foreach ($this->context->type->methods() as $method) {
       $annotations= $method->annotations();
 
@@ -72,21 +72,21 @@ class TestClass extends Group {
 
         // Check expected exceptions
         if ($expect= $annotations->type(Expect::class)) {
-          $case->expecting(Reflection::type($expect->argument('class') ?? $expect->argument(0)));
+          $case->expecting($expect->newInstance());
         }
 
         // For each provider, create test case variations from the values it provides
         $provider= null;
         foreach ($annotations->all(Provider::class) as $annotation) {
           $provider= $annotation->newInstance();
-          $cases[]= function() use($case, $provider) {
+          $execute[]= (function() use($case, $provider) {
             foreach ($provider->values($this->context) as $arguments) {
               yield (clone $case)->passing($arguments);
             }
-          };
+          })();
         }
 
-        $provider || $cases[]= function() use($case) { yield $case; };
+        $provider || $execute[]= [$case];
       }
     }
 
@@ -96,8 +96,8 @@ class TestClass extends Group {
       $method->invoke($this->context->instance, [], $this->context->type);
     }
 
-    foreach ($cases as $variations) {
-      yield from $variations();
+    foreach ($execute as $cases) {
+      yield from $cases;
     }
 
     foreach ($after as $method) {
