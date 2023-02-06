@@ -3,6 +3,9 @@
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #11: Only verify parameterized test cases' prerequisites
+  once, resulting in a small performance improvement. See issue #10
+  (@thekid)
 * Merged PR #9: Implement checking for expected exceptions' messages
   (@thekid)
 * Merged PR #7: Implement passing command line arguments via `#[Args]`
