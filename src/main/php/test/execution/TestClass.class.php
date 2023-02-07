@@ -24,7 +24,7 @@ class TestClass extends Group {
 
   /** @return iterable */
   public function prerequisites() {
-    foreach ($this->context->type->annotations()->all(Verification::class) as $verify) {
+    foreach ($this->context->annotations(Verification::class) as $verify) {
       yield from $verify->newInstance()->assertions($this->context);
     }
   }
@@ -34,7 +34,7 @@ class TestClass extends Group {
     $this->context->pass($arguments);
     try {
       $pass= [];
-      foreach ($this->context->type->annotations()->all(Provider::class) as $provider) {
+      foreach ($this->context->annotations(Provider::class) as $provider) {
         foreach ($provider->newInstance()->values($this->context) as $value) {
           $pass[]= $value;
         }
@@ -45,7 +45,7 @@ class TestClass extends Group {
     } catch (CannotInstantiate $e) {
       throw new GroupFailed($e->type()->name(), $e->getCause());
     } catch (Throwable $e) {
-      throw new GroupFailed('providers', $e);
+      throw new GroupFailed($this->context->type->name().'::<providers>', $e);
     }
 
     // Enumerate methods

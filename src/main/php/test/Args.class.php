@@ -1,6 +1,5 @@
 <?php namespace test;
 
-use lang\IllegalArgumentException;
 use test\execution\Context;
 
 /**
@@ -41,11 +40,7 @@ class Args implements Provider {
     // Select specific arguments, either by position or by --name=...
     foreach ($this->select as $select) {
       if (is_int($select)) {
-        if (isset($context->arguments[$select])) {
-          yield $context->arguments[$select];
-          continue;
-        }
-        throw new IllegalArgumentException("Missing argument #{$select}");
+        yield $context->arguments[$select] ?? null;
       } else {
         $prefix= "--{$select}=";
         $l= strlen($prefix);
@@ -55,7 +50,7 @@ class Args implements Provider {
             continue 2;
           }
         }
-        throw new IllegalArgumentException("Missing argument --{$select}");
+        yield null;
       }
     }
   }
