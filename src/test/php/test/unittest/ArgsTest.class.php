@@ -35,19 +35,21 @@ class ArgsTest {
     );
   }
 
-  #[Test]
+  #[Test, Expect(IllegalArgumentException::class)]
   public function missing_positional_argument() {
-    Assert::equals(
-      [null],
-      iterator_to_array((new Args(0))->values(new Context(Reflection::type(self::class), [])))
-    );
+    iterator_to_array((new Args(0))->values(new Context(Reflection::type(self::class), [])));
   }
 
-  #[Test]
+  #[Test, Expect(IllegalArgumentException::class)]
   public function missing_named_argument() {
+    iterator_to_array((new Args('dsn'))->values(new Context(Reflection::type(self::class), [])));
+  }
+
+  #[Test, Values([null, 'localhost'])]
+  public function optional_named_argument($default) {
     Assert::equals(
-      [null],
-      iterator_to_array((new Args('dsn'))->values(new Context(Reflection::type(self::class), [])))
+      [$default],
+      iterator_to_array((new Args(['dsn' => $default]))->values(new Context(Reflection::type(self::class), [])))
     );
   }
 }

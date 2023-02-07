@@ -1,5 +1,6 @@
 <?php namespace test;
 
+use lang\IllegalArgumentException;
 use test\execution\Context;
 
 /**
@@ -8,6 +9,7 @@ use test\execution\Context;
  * - Select all arguments: `Args`
  * - Select by position: `Args(0)`
  * - Select named *--dsn=...*: `Args('dsn')`
+ * - Select with default: `Args(['dsn' => 'localhost'])`
  *
  * @test  test.unittest.ArgsTest
  */
@@ -21,6 +23,34 @@ class Args implements Provider {
    */
   public function __construct(...$select) {
     $this->select= $select;
+  }
+
+  private function missing($argument) {
+    throw new IllegalArgumentException("Missing argument {$argument}");
+  }
+
+  /**
+   * Selects a specific argument
+   *
+   * @param  Context $context
+   * @param  int|string $argument
+   * @param  mixed... $default
+   * @throws IllegalArgumentException
+   */
+  private function argument($context, $argument, ...$default) {
+    if (is_int($argument)) {
+      return $context->arguments[$argument] ?? ($default
+        ? $default[0]
+        : $this->missing("#{$argument}")
+      );
+    } else {
+      $prefix= "--{$argument}=";
+      $l= strlen($prefix);
+      foreach ($context->arguments as $argument) {
+        if (0 === strncmp($argument, $prefix, $l)) return substr($argument, $l);
+      }
+      return $default ? $default[0] : $this->missing("--{$argument}");
+    }
   }
 
   /**
@@ -39,18 +69,10 @@ class Args implements Provider {
 
     // Select specific arguments, either by position or by --name=...
     foreach ($this->select as $select) {
-      if (is_int($select)) {
-        yield $context->arguments[$select] ?? null;
+      if (is_array($select)) {
+        yield $this->argument($context, key($select), current($select));
       } else {
-        $prefix= "--{$select}=";
-        $l= strlen($prefix);
-        foreach ($context->arguments as $argument) {
-          if (0 === strncmp($argument, $prefix, $l)) {
-            yield substr($argument, $l);
-            continue 2;
-          }
-        }
-        yield null;
+        yield $this->argument($context, $select);
       }
     }
   }
