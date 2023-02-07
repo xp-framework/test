@@ -46,6 +46,14 @@ class ArgsTest {
   }
 
   #[Test, Values([null, 'localhost'])]
+  public function optional_positional_argument($default) {
+    Assert::equals(
+      [$default],
+      iterator_to_array((new Args([0 => $default]))->values(new Context(Reflection::type(self::class), [])))
+    );
+  }
+
+  #[Test, Values([null, 'localhost'])]
   public function optional_named_argument($default) {
     Assert::equals(
       [$default],
