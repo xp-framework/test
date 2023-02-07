@@ -106,9 +106,10 @@ class Runner {
       $grouped= [];
       $before= $metrics->count['failure'];
       try {
-        $run= $p= 0;
+        $run= 0;
+        $s= sizeof($progress);
         foreach ($group->tests($pass) as $test) {
-          Console::writef("\r%s", $progress[$p++] ?? $progress[$p= 0]);
+          Console::writef("\r%s", $progress[$run % $s]);
 
           $timer->start();
           $outcome= $test->run();
