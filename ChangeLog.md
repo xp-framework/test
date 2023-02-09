@@ -1,7 +1,14 @@
  Tests - ChangeLog
-=================
+==================
 
 ## ?.?.? / ????-??-??
+
+## 1.0.0 / 2023-02-09
+
+This first major release serves implements the most common testing
+usecases, able to replace the *xp-framework/unittest* library. From
+here on, projects can start to migrate without having to follow the
+frequent version jumps in a 0.x release.
 
 * Merged PR #12: Fix errors occuring during setup not being correctly
   reported (e.g. when exceptions are raised inside `#[Before]`).
