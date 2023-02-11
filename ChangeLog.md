@@ -3,6 +3,15 @@
 
 ## ?.?.? / ????-??-??
 
+## 1.1.0 / 2023-02-11
+
+* Merged PR #14: Declare `Test`, `After` and `Before` annotations in order
+  to prevent repeated class loading queries, increasing performance
+  (@thekid)
+* Added type-hints to `Expect` annotation so that incorrect usage surfaces
+  early along instead of causing confusing errors somewhere downstream
+  (@thekid)
+
 ## 1.0.0 / 2023-02-09
 
 This first major release serves implements the most common testing
