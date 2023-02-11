@@ -20,7 +20,7 @@ class Expect {
    * @param  string $class
    * @param  ?string $message
    */
-  public function __construct($class= [], $message= null) {
+  public function __construct(string $class, string $message= null) {
     $this->class= $class;
     $this->message= $message;
   }
