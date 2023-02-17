@@ -107,7 +107,7 @@ class AssertableTest {
     $a->throws(IllegalArgumentException::class, '/[Tt]est/');
   }
 
-  #[Test, Expect(AssertionFailed::class, 'Failed asserting that lang.IllegalArgumentException was thrown')]
+  #[Test, Expect(AssertionFailed::class, 'Failed asserting that lang.IllegalArgumentException was thrown, no exception occurred')]
   public function nothing_thrown() {
     $a= new Assertable(function() { });
     $a->throws(IllegalArgumentException::class);
