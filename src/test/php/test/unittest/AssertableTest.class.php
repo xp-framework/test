@@ -113,13 +113,13 @@ class AssertableTest {
     $a->throws(IllegalArgumentException::class);
   }
 
-  #[Test, Expect(AssertionFailed::class, 'Failed asserting that lang.IllegalArgumentException was thrown, have lang.IllegalStateException (\'Test\') instead')]
+  #[Test, Expect(AssertionFailed::class, 'Failed asserting that lang.IllegalArgumentException was thrown, caught lang.IllegalStateException(\'Test\') instead')]
   public function incorrect_thrown_type() {
     $a= new Assertable(function() { throw new IllegalStateException('Test'); });
     $a->throws(IllegalArgumentException::class);
   }
 
-  #[Test, Expect(AssertionFailed::class, 'Failed asserting that lang.IllegalArgumentException(\'Test\') was thrown, have lang.IllegalArgumentException (\'Other\') instead')]
+  #[Test, Expect(AssertionFailed::class, 'Failed asserting that lang.IllegalArgumentException(\'Test\') was thrown, caught lang.IllegalArgumentException(\'Other\') instead')]
   public function incorrect_thrown_message() {
     $a= new Assertable(function() { throw new IllegalArgumentException('Other'); });
     $a->throws(IllegalArgumentException::class, 'Test');

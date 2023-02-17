@@ -155,15 +155,10 @@ class Assertable {
     } catch (Any $e) {
       $t= Throwable::wrap($e);
       if ($expect->metBy($t)) return $this;
-
-      throw new AssertionFailed(sprintf(
-        "%s was thrown, have %s ('%s') instead",
-        $expect->pattern(),
-        nameof($t),
-        $t->getMessage()
-      ));
+      throw new AssertionFailed($expect->pattern().' was thrown, caught '.Expect::patternOf($t).' instead');
     }
 
+    // No exception was raised
     throw new AssertionFailed($expect->pattern().' was thrown');
   }
 }

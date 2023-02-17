@@ -38,8 +38,8 @@ class Expect {
     }
   }
 
-  /** @return string */
-  public function pattern() {
+  /** Returns pattern for this expectation */
+  public function pattern(): string {
     $pattern= strtr($this->class, '\\', '.');
     if (null === $this->message) {
       return $pattern;
@@ -48,5 +48,10 @@ class Expect {
     } else {
       return "{$pattern}('{$this->message}')";
     }
+  }
+
+  /** Returns pattern for a given exception */
+  public static function patternOf(Throwable $t): string {
+    return nameof($t)."('{$t->getMessage()}')";
   }
 }
