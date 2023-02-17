@@ -80,7 +80,7 @@ class TestCase {
         $message= sprintf(
           "Did not catch expected %s, %s was thrown instead",
           $this->expectation->pattern(),
-          Expect::patternOf($t),
+          Expect::patternOf($t)
         );
         return new Failed($name, $message, $t);
       } else {
