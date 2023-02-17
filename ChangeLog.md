@@ -3,6 +3,10 @@
 
 ## ?.?.? / ????-??-??
 
+## 1.2.0 / 2023-02-17
+
+* Merged PR #15: Add assertion helpers for thrown exceptions - @thekid
+
 ## 1.1.0 / 2023-02-11
 
 * Merged PR #14: Declare `Test`, `After` and `Before` annotations in order
