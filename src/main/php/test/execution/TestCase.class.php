@@ -77,7 +77,12 @@ class TestCase {
         $reason= $t instanceof AssertionFailed ? $t->getMessage() : 'Unexpected '.lcfirst($t->compoundMessage());
         return new Failed($name, $reason, $t);
       } else if (!$this->expectation->metBy($t)) {
-        return new Failed($name, 'Did not catch expected '.$this->expectation->pattern(), $t);
+        $message= sprintf(
+          "Did not catch expected %s, %s was thrown instead",
+          $this->expectation->pattern(),
+          Expect::patternOf($t)
+        );
+        return new Failed($name, $message, $t);
       } else {
         return new Succeeded($name);
       }

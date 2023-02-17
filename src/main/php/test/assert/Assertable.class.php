@@ -1,8 +1,9 @@
 <?php namespace test\assert;
 
-use Closure, Throwable, Traversable, ReflectionFunction, ReflectionMethod;
-use lang\{Type, IllegalArgumentException};
-use test\AssertionFailed;
+use Closure, Traversable, ReflectionFunction, ReflectionMethod;
+use Throwable as Any;
+use lang\{Type, Throwable, IllegalArgumentException};
+use test\{AssertionFailed, Expect};
 
 /** @test test.unittest.AssertableTest */
 class Assertable {
@@ -60,7 +61,7 @@ class Assertable {
       if (1 === $r->getNumberOfRequiredParameters()) {
         $mapper= function($value, $key) use($mapper) { return $mapper($value); };
       }
-    } catch (Throwable $e) {
+    } catch (Any $e) {
       throw new IllegalArgumentException($e->getMessage(), $e);
     }
 
@@ -138,5 +139,26 @@ class Assertable {
    */
   public function isInstanceOf($type) {
     return $this->is(new Instance($type));
+  }
+
+  /**
+   * Assert a given exception is thrown by the callable value
+   *
+   * @param  string|Type $type
+   * @param  ?string $message
+   * @return self
+   */
+  public function throws($type, $message= null) {
+    $expect= new Expect($type instanceof Type ? $type->literal() : $type, $message);
+    try {
+      ($this->value)();
+    } catch (Any $e) {
+      $t= Throwable::wrap($e);
+      if ($expect->metBy($t)) return $this;
+
+      throw new AssertionFailed($expect->pattern().' was thrown, caught '.Expect::patternOf($t).' instead');
+    }
+
+    throw new AssertionFailed($expect->pattern().' was thrown, no exception occurred');
   }
 }

@@ -1,6 +1,6 @@
 <?php namespace test\unittest;
 
-use lang\IllegalArgumentException;
+use lang\{IllegalArgumentException, IllegalStateException};
 use test\assert\Assertable;
 use test\{Assert, AssertionFailed, Expect, Test, Values};
 
@@ -87,5 +87,41 @@ class AssertableTest {
   #[Test, Expect(IllegalArgumentException::class)]
   public function illegal_callback() {
     (new Assertable(1))->mappedBy('not-a-function');
+  }
+
+  #[Test]
+  public function throws() {
+    $a= new Assertable(function() { throw new IllegalArgumentException('Test'); });
+    $a->throws(IllegalArgumentException::class);
+  }
+
+  #[Test]
+  public function throws_with_message() {
+    $a= new Assertable(function() { throw new IllegalArgumentException('Test'); });
+    $a->throws(IllegalArgumentException::class, 'Test');
+  }
+
+  #[Test]
+  public function throws_with_pattern() {
+    $a= new Assertable(function() { throw new IllegalArgumentException('Test'); });
+    $a->throws(IllegalArgumentException::class, '/[Tt]est/');
+  }
+
+  #[Test, Expect(AssertionFailed::class, 'Failed asserting that lang.IllegalArgumentException was thrown, no exception occurred')]
+  public function nothing_thrown() {
+    $a= new Assertable(function() { });
+    $a->throws(IllegalArgumentException::class);
+  }
+
+  #[Test, Expect(AssertionFailed::class, 'Failed asserting that lang.IllegalArgumentException was thrown, caught lang.IllegalStateException(\'Test\') instead')]
+  public function incorrect_thrown_type() {
+    $a= new Assertable(function() { throw new IllegalStateException('Test'); });
+    $a->throws(IllegalArgumentException::class);
+  }
+
+  #[Test, Expect(AssertionFailed::class, 'Failed asserting that lang.IllegalArgumentException(\'Test\') was thrown, caught lang.IllegalArgumentException(\'Other\') instead')]
+  public function incorrect_thrown_message() {
+    $a= new Assertable(function() { throw new IllegalArgumentException('Other'); });
+    $a->throws(IllegalArgumentException::class, 'Test');
   }
 }
