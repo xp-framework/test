@@ -77,4 +77,15 @@ abstract class Assert {
   public static function instance($expected, $actual) {
     (new Assertable($actual))->is(new Instance($expected));
   }
+
+  /**
+   * Throws shorthand
+   *
+   * @param  string|Type $expected
+   * @param  callable $actual
+   * @return void
+   */
+  public static function throws($expected, $actual) {
+    (new Assertable($actual))->throws($expected);
+  }
 }
