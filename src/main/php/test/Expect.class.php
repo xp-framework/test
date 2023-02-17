@@ -46,7 +46,7 @@ class Expect {
     } else if ('/' === ($this->message[0] ?? '')) {
       return "{$pattern}({$this->message})";
     } else {
-      return "{$pattern}('{$this->message}'')";
+      return "{$pattern}('{$this->message}')";
     }
   }
 }
