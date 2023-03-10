@@ -43,7 +43,7 @@ class TestClass extends Group {
     } catch (InvocationFailed $e) {
       throw new GroupFailed($e->target()->compoundName(), $e->getCause());
     } catch (CannotInstantiate $e) {
-      throw new GroupFailed($e->type()->name(), $e->getCause());
+      throw new GroupFailed($e->type()->name(), $e->getCause() ?? $e);
     } catch (Throwable $e) {
       throw new GroupFailed($this->context->type->name().'::<providers>', $e);
     }

@@ -3,6 +3,10 @@
 
 ## ?.?.? / ????-??-??
 
+* Fixed issue #17: Argument 2 ($cause) must be of type lang\Throwable,
+  null given
+  (@thekid)
+
 ## 1.2.0 / 2023-02-17
 
 * Merged PR #15: Add assertion helpers for thrown exceptions - @thekid
