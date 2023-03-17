@@ -8,7 +8,7 @@ use test\{AssertionFailed, Expect};
 /** @test test.unittest.AssertableTest */
 class Assertable {
   public static $TRUE, $FALSE, $NULL;
-  private $value;
+  public $value;
 
   static function __static() {
 
