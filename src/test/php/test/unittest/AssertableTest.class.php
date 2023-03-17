@@ -79,8 +79,22 @@ class AssertableTest {
   #[Test]
   public function map_can_transform_keys_via_yield() {
     Assert::equals(
-      new Assertable([1 => 'a', 2 => 'b']),
-      (new Assertable(['a' => 1, 'b' => 2]))->mappedBy(function($v, $k) { yield $v => $k; })
+      new Assertable([1 => 'a', 2 => 'b', 0 => 'c']),
+      (new Assertable(['a' => 1, 'b' => 2, 'c' => 0]))->mappedBy(function($v, $k) { yield $v => $k; })
+    );
+  }
+
+  #[Test]
+  public function yield_with_explicit_null_appends_to_result() {
+    $opcodes= function() {
+      yield 'const'    => 1;
+      yield 'add'      => 1;
+      yield 'multiply' => 2;
+      yield 'add'      => -1;
+    };
+    Assert::equals(
+      new Assertable([['const', 1], ['add', 1], ['multiply', 2], ['add', -1]]),
+      (new Assertable($opcodes()))->mappedBy(function($arg, $op) { yield null => [$op, $arg]; })
     );
   }
 

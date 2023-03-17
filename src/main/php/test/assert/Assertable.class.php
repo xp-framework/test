@@ -70,7 +70,13 @@ class Assertable {
       foreach ($this->value as $key => $element) {
         $m= $mapper($element, $key);
         if ($m instanceof Traversable) {
-          $self->value+= iterator_to_array($m);
+          foreach ($m as $key => $value) {
+            if (null === $key) {
+              $self->value[]= $value;
+            } else {
+              $self->value[$key]= $value;
+            }
+          }
         } else if (is_string($key)) {
           $self->value[$key]= $m;
         } else {
