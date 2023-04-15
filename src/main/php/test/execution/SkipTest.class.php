@@ -7,7 +7,7 @@ use test\outcome\Skipped;
 class SkipTest implements Runnable {
   private $outcome;
 
-  public function __construct(string $name, ?string $reason= null) {
+  public function __construct(string $name, string $reason= null) {
     $this->outcome= new Skipped($name, $reason);
   }
 
