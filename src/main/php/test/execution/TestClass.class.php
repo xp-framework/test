@@ -86,7 +86,11 @@ class TestClass extends Group {
 
           $provider || $execute[]= new Once($case);
         } catch (Throwable $t) {
-          $execute[]= new Returning($case, new Failed($case->name(), $t));
+          $execute[]= new Returning($case, new Failed(
+            $case->name(),
+            $t->getMessage(),
+            $t->getCause() ?? $t
+          ));
         }
       }
     }
