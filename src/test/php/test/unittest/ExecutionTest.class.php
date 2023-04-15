@@ -34,12 +34,45 @@ class ExecutionTest {
   }
 
   #[Test]
+  public function empty_test_also_succeeds() {
+    Assert::equals(['fixture' => Succeeded::class], $this->execute(new class() {
+
+      #[Test]
+      public function fixture() {
+        // NOOP
+      }
+    }));
+  }
+
+  #[Test]
   public function failing_test() {
     Assert::equals(['fixture' => Failed::class], $this->execute(new class() {
 
       #[Test]
       public function fixture() {
         Assert::true(false);
+      }
+    }));
+  }
+
+  #[Test]
+  public function tests_raising_exceptions_fail() {
+    Assert::equals(['fixture' => Failed::class], $this->execute(new class() {
+
+      #[Test]
+      public function fixture() {
+        throw new IllegalStateException('Failure');
+      }
+    }));
+  }
+
+  #[Test]
+  public function tests_raising_expected_exceptions_succeed() {
+    Assert::equals(['fixture' => Succeeded::class], $this->execute(new class() {
+
+      #[Test, Expect(IllegalStateException::class)]
+      public function fixture() {
+        throw new IllegalStateException('Failure');
       }
     }));
   }
