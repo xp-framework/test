@@ -3,7 +3,10 @@
 
 ## ?.?.? / ????-??-??
 
-* Merged PR #19: Catch exceptions from TestCase setup and make tests fail
+## 1.3.1 / 2023-04-15
+
+* Merged PR #19: Catch exceptions from test setup and make tests fail,
+  fixing issue #16
   (@thekid)
 
 ## 1.3.0 / 2023-04-15
