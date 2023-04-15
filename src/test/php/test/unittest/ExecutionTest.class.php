@@ -3,7 +3,7 @@
 use lang\IllegalStateException;
 use test\execution\TestClass;
 use test\outcome\{Succeeded, Failed, Skipped};
-use test\{Assert, Ignore, Test};
+use test\{Assert, Expect, Ignore, Test};
 
 class ExecutionTest {
 
@@ -51,6 +51,17 @@ class ExecutionTest {
       #[Test, Ignore]
       public function fixture() {
         throw new IllegalStateException('Unreachable');
+      }
+    }));
+  }
+
+  #[Test]
+  public function incorrect_annotation_use_fails_test() {
+    Assert::equals(['fixture' => Failed::class], $this->execute(new class() {
+
+      #[Test, Expect(['@incorrect'])]
+      public function fixture() {
+        // Would otherwise succeed
       }
     }));
   }

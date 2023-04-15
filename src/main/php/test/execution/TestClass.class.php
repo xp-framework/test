@@ -2,6 +2,7 @@
 
 use lang\reflection\{CannotInstantiate, InvocationFailed, Type};
 use lang\{Reflection, Throwable, XPClass};
+use test\outcome\{Failed, Skipped};
 use test\verify\Verification;
 use test\{After, Before, Expect, Ignore, Provider, Test};
 
@@ -64,25 +65,33 @@ class TestClass extends Group {
         $case= new TestCase($method->name(), $method->closure($this->context->instance));
 
         // Check prerequisites
-        foreach ($annotations->all(Verification::class) as $verify) {
-          foreach ($verify->newInstance()->assertions($this->context) as $prerequisite) {
-            $case->verifying($prerequisite);
+        try {
+          foreach ($annotations->all(Verification::class) as $verify) {
+            foreach ($verify->newInstance()->assertions($this->context) as $prerequisite) {
+              $case->verifying($prerequisite);
+            }
           }
-        }
 
-        // Check expected exceptions
-        if ($expect= $annotations->type(Expect::class)) {
-          $case->expecting($expect->newInstance());
-        }
+          // Check expected exceptions
+          if ($expect= $annotations->type(Expect::class)) {
+            $case->expecting($expect->newInstance());
+          }
 
-        // For each provider, create test case variations from the values it provides
-        $provider= null;
-        foreach ($annotations->all(Provider::class) as $i => $annotation) {
-          $provider= $annotation->newInstance();
-          $execute[]= new Provided($case, $provider->values($this->context));
-        }
+          // For each provider, create test case variations from the values it provides
+          $provider= null;
+          foreach ($annotations->all(Provider::class) as $i => $annotation) {
+            $provider= $annotation->newInstance();
+            $execute[]= new Provided($case, $provider->values($this->context));
+          }
 
-        $provider || $execute[]= new Once($case);
+          $provider || $execute[]= new Once($case);
+        } catch (Throwable $t) {
+          $execute[]= new Returning($case, new Failed(
+            $case->name(),
+            $t->getMessage(),
+            $t->getCause() ?? $t
+          ));
+        }
       }
     }
 
@@ -99,7 +108,7 @@ class TestClass extends Group {
     foreach ($execute as $run) {
       foreach ($run->case->prerequisites() as $prerequisite) {
         if ($prerequisite->verify()) continue;
-        yield new SkipTest($run->case->name(), $prerequisite->requirement(false));
+        yield new Returning($case, new Skipped($run->case->name(), $prerequisite->requirement(false)));
         continue 2;
       }
 
