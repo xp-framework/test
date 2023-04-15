@@ -148,7 +148,10 @@ class Runner {
         Console::write('  ', $cases[$kind], ' ', str_replace("\n", "\n    ", $outcome->test));
         switch ($kind) {
           case 'success': Console::writeLine(); break;
-          case 'skipped': Console::writeLinef("\033[1;32;3m // Skip: %s\033[0m", $outcome->reason); break;
+          case 'skipped': {
+            Console::writeLinef("\033[1;32;3m // Skip%s\033[0m", $outcome->reason ? ": {$outcome->reason}" : '');
+            break;
+          }
           case 'failure': {
             Console::writeLinef("\033[1;32;3m // Fail: %s\033[0m", $outcome->reason);
             $failures[$group->name().'::'.$outcome->test]= $outcome;
