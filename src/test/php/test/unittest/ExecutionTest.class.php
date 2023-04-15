@@ -3,6 +3,7 @@
 use lang\IllegalStateException;
 use test\execution\TestClass;
 use test\outcome\{Succeeded, Failed, Skipped};
+use test\verify\Runtime;
 use test\{Assert, Expect, Ignore, Test};
 
 class ExecutionTest {
@@ -82,6 +83,17 @@ class ExecutionTest {
     Assert::equals(['fixture' => Skipped::class], $this->execute(new class() {
 
       #[Test, Ignore]
+      public function fixture() {
+        throw new IllegalStateException('Unreachable');
+      }
+    }));
+  }
+
+  #[Test]
+  public function unmatched_prerequisites_skip_test() {
+    Assert::equals(['fixture' => Skipped::class], $this->execute(new class() {
+
+      #[Test, Runtime(php: '<0.1.0')]
       public function fixture() {
         throw new IllegalStateException('Unreachable');
       }
