@@ -3,6 +3,9 @@
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #19: Catch exceptions from TestCase setup and make tests fail
+  (@thekid)
+
 ## 1.3.0 / 2023-04-15
 
 * Allowed omitting the reason in `Ignore` annotations. See issue #16
