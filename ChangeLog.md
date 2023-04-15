@@ -3,6 +3,10 @@
 
 ## ?.?.? / ????-??-??
 
+## 1.3.0 / 2023-04-15
+
+* Allowed omitting the reason in `Ignore` annotations. See issue #16
+  (@thekid)
 * Fixed issue #17: Argument 2 ($cause) must be of type lang\Throwable,
   null given
   (@thekid)
