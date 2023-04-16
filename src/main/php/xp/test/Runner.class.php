@@ -35,8 +35,9 @@ use util\profiling\Timer;
  *   $ xp -watch . test src/test/php
  *   ```
  *
- * The `-r` argument can be used to select a different report format.
- * It defaults to *ConsoleOutput*.
+ * By default, the test run is reported to the console. The `-r` argument
+ * (which can be supplied multiple times) followed by the implementing class
+ * and optional arguments separated by commas, changes the reporting.
  */
 class Runner {
 
@@ -55,7 +56,8 @@ class Runner {
     $overall= new Timer();
     $sources= new Sources();
     $metrics= new Metrics();
-    $report= null;
+    $reporting= new Reporting();
+
     $pass= [];
     try {
       for ($i= 0, $s= sizeof($args); $i < $s; $i++) {
@@ -63,7 +65,7 @@ class Runner {
           $pass= array_slice($args, $i + 1);
           break;
         } else if ('-r' === $args[$i]) {
-          $report= self::report($args[++$i]);
+          $reporting->add(self::report($args[++$i]));
         } else if (0 === strncmp($args[$i], '--', 2)) {
           $pass= array_slice($args, $i);
           break;
@@ -81,6 +83,7 @@ class Runner {
           $sources->add(new FromClass($args[$i]));
         }
       }
+      $reporting->delegated() || $reporting->add(new ConsoleOutput());
     } catch (Throwable $t) {
       Console::writeLine("\033[33m@", (new XPClass(self::class))->getClassLoader(), "\033[0m");
       Console::writeLine("\033[41;1;37m ERROR \033[0;1;37m Invalid command line argument(s)\033[0m\n");
@@ -88,17 +91,16 @@ class Runner {
       return 2;
     }
 
-    $report?? $report= new ConsoleOutput();
     $overall->start();
     $failures= [];
     foreach ($sources->groups() as $group) {
-      $report->enter($group);
+      $reporting->enter($group);
 
       // Check group prerequisites
       foreach ($group->prerequisites() as $prerequisite) {
         if (!$prerequisite->verify()) {
           $metrics->count['skipped']++;
-          $report->skip($group, $prerequisite->requirement(false));
+          $reporting->skip($group, $prerequisite->requirement(false));
           continue 2;
         }
       }
@@ -109,13 +111,13 @@ class Runner {
       try {
         $run= 0;
         foreach ($group->tests($pass) as $test) {
-          $report->running($group, $test, $run);
+          $reporting->running($group, $test, $run);
 
           $timer->start();
           $outcome= $test->run();
           $timer->stop();
 
-          $report->finished($group, $test, $outcome);
+          $reporting->finished($group, $test, $outcome);
           $run++;
 
           $results[]= $metrics->record($outcome, $timer->elapsedTime());
@@ -128,16 +130,16 @@ class Runner {
 
         if (0 === $run) {
           $metrics->count['skipped']++;
-          $report->skip($group, 'No test cases declared in this group');
+          $reporting->skip($group, 'No test cases declared in this group');
         } else if ($failed) {
-          $report->fail($group, $results);
+          $reporting->fail($group, $results);
         } else {
-          $report->pass($group, $results);
+          $reporting->pass($group, $results);
         }
       } catch (GroupFailed $f) {
         $failures[$f->origin]= $f->failure();
         $metrics->count['failure']++;
-        $report->stop($group, $f->getMessage());
+        $reporting->stop($group, $f->getMessage());
       }
     }
     $overall->stop();
@@ -152,7 +154,7 @@ class Runner {
 
     // ...finally, output all failures and a summary
     $rt= Runtime::getInstance();
-    $report->summary(
+    $reporting->summary(
       $metrics->using($rt->memoryUsage(), $rt->peakMemoryUsage()),
       $overall->elapsedTime(),
       $failures
