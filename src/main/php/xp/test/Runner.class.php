@@ -42,7 +42,7 @@ class Runner {
     $overall= new Timer();
     $sources= new Sources();
     $metrics= new Metrics();
-    $output= new ConsoleOutput();
+    $report= new ConsoleOutput();
     $pass= [];
     for ($i= 0, $s= sizeof($args); $i < $s; $i++) {
       if ('--' === $args[$i]) {
@@ -69,13 +69,13 @@ class Runner {
     $overall->start();
     $failures= [];
     foreach ($sources->groups() as $group) {
-      $output->enter($group);
+      $report->enter($group);
 
       // Check group prerequisites
       foreach ($group->prerequisites() as $prerequisite) {
         if (!$prerequisite->verify()) {
           $metrics->count['skipped']++;
-          $output->skip($group, $prerequisite->requirement(false));
+          $report->skip($group, $prerequisite->requirement(false));
           continue 2;
         }
       }
@@ -86,13 +86,13 @@ class Runner {
       try {
         $run= 0;
         foreach ($group->tests($pass) as $test) {
-          $output->running($group, $test, $run);
+          $report->running($group, $test, $run);
 
           $timer->start();
           $outcome= $test->run();
           $timer->stop();
 
-          $output->finished($group, $test, $outcome);
+          $report->finished($group, $test, $outcome);
           $run++;
 
           $results[]= $metrics->record($outcome, $timer->elapsedTime());
@@ -105,16 +105,16 @@ class Runner {
 
         if (0 === $run) {
           $metrics->count['skipped']++;
-          $output->skip($group, 'No test cases declared in this group');
+          $report->skip($group, 'No test cases declared in this group');
         } else if ($failed) {
-          $output->fail($group, $results);
+          $report->fail($group, $results);
         } else {
-          $output->pass($group, $results);
+          $report->pass($group, $results);
         }
       } catch (GroupFailed $f) {
         $failures[$f->origin]= $f->failure();
         $metrics->count['failure']++;
-        $output->stop($group, $f->getMessage());
+        $report->stop($group, $f->getMessage());
       }
     }
     $overall->stop();
@@ -129,7 +129,7 @@ class Runner {
 
     // ...finally, output all failures and a summary
     $rt= Runtime::getInstance();
-    $output->summary(
+    $report->summary(
       $metrics->using($rt->memoryUsage(), $rt->peakMemoryUsage()),
       $overall->elapsedTime(),
       $failures

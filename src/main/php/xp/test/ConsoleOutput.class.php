@@ -6,7 +6,7 @@ use util\cmd\Console;
  * Console output, the default output mechanism, using console colors
  * and a progress bar while running a test group.
  */
-class ConsoleOutput extends Output {
+class ConsoleOutput extends Report {
   const PROGRESS= ['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷'];
   const GROUPS= [
     'success' => "\033[42;1;37m PASS \033[0m",

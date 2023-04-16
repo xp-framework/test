@@ -1,6 +1,6 @@
 <?php namespace xp\test;
 
-abstract class Output {
+abstract class Report {
 
   /**
    * Called when entering a group. The group ends with one of the following:
