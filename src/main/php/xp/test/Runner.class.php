@@ -1,6 +1,6 @@
 <?php namespace xp\test;
 
-use lang\{Runtime, XPClass};
+use lang\{Runtime, XPClass, Throwable, IllegalArgumentException};
 use test\execution\{GroupFailed, Metrics};
 use test\source\{Sources, FromClass, FromDirectory, FromFile, FromPackage};
 use util\Objects;
@@ -34,38 +34,61 @@ use util\profiling\Timer;
  *   ```sh
  *   $ xp -watch . test src/test/php
  *   ```
+ *
+ * The `-r` argument can be used to select a different report format.
+ * It defaults to *ConsoleOutput*.
  */
 class Runner {
+
+  private static function report($arg) {
+    $segments= explode(',', $arg);
+    $name= array_shift($segments);
+
+    $class= XPClass::forName(strpos($name, '.') ? $name : 'xp.test.'.$name);
+    if ($class->isSubclassOf(Report::class)) return $class->newInstance(...$segments);
+
+    throw new IllegalArgumentException('Class '.$class.' cannot be used as a report');
+  }
 
   public static function main($args) {
     $timer= new Timer();
     $overall= new Timer();
     $sources= new Sources();
     $metrics= new Metrics();
-    $report= new ConsoleOutput();
+    $report= null;
     $pass= [];
-    for ($i= 0, $s= sizeof($args); $i < $s; $i++) {
-      if ('--' === $args[$i]) {
-        $pass= array_slice($args, $i + 1);
-        break;
-      } else if (0 === strncmp($args[$i], '--', 2)) {
-        $pass= array_slice($args, $i);
-        break;
-      } else if (is_dir($args[$i])) {
-        $sources->add(new FromDirectory($args[$i]));
-      } else if (is_file($args[$i])) {
-        $sources->add(new FromFile($args[$i]));
-      } else if (0 === substr_compare($args[$i], '.**', -3, 3)) {
-        $sources->add(new FromPackage(substr($args[$i], 0, -3), true));
-      } else if (0 === substr_compare($args[$i], '.*', -2, 2)) {
-        $sources->add(new FromPackage(substr($args[$i], 0, -2), false));
-      } else if (false !== ($p= strpos($args[$i], '::'))) {
-        $sources->add(new FromClass(substr($args[$i], 0, $p), substr($args[$i], $p + 2)));
-      } else {
-        $sources->add(new FromClass($args[$i]));
+    try {
+      for ($i= 0, $s= sizeof($args); $i < $s; $i++) {
+        if ('--' === $args[$i]) {
+          $pass= array_slice($args, $i + 1);
+          break;
+        } else if ('-r' === $args[$i]) {
+          $report= self::report($args[++$i]);
+        } else if (0 === strncmp($args[$i], '--', 2)) {
+          $pass= array_slice($args, $i);
+          break;
+        } else if (is_dir($args[$i])) {
+          $sources->add(new FromDirectory($args[$i]));
+        } else if (is_file($args[$i])) {
+          $sources->add(new FromFile($args[$i]));
+        } else if (0 === substr_compare($args[$i], '.**', -3, 3)) {
+          $sources->add(new FromPackage(substr($args[$i], 0, -3), true));
+        } else if (0 === substr_compare($args[$i], '.*', -2, 2)) {
+          $sources->add(new FromPackage(substr($args[$i], 0, -2), false));
+        } else if (false !== ($p= strpos($args[$i], '::'))) {
+          $sources->add(new FromClass(substr($args[$i], 0, $p), substr($args[$i], $p + 2)));
+        } else {
+          $sources->add(new FromClass($args[$i]));
+        }
       }
+    } catch (Throwable $t) {
+      Console::writeLine("\033[33m@", (new XPClass(self::class))->getClassLoader(), "\033[0m");
+      Console::writeLine("\033[41;1;37m ERROR \033[0;1;37m Invalid command line argument(s)\033[0m\n");
+      Console::writeLine($t);
+      return 2;
     }
 
+    $report?? $report= new ConsoleOutput();
     $overall->start();
     $failures= [];
     foreach ($sources->groups() as $group) {
