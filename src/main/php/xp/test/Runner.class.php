@@ -38,28 +38,11 @@ use util\profiling\Timer;
 class Runner {
 
   public static function main($args) {
-    static $progress= ['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷'];
-    static $groups= [
-      'success' => "\033[42;1;37m PASS \033[0m",
-      'failure' => "\033[41;1;37m FAIL \033[0m",
-      'stopped' => "\033[47;1;30m STOP \033[0m",
-      'skipped' => "\033[43;1;37m SKIP \033[0m",
-    ];
-    static $cases= [
-      'success' => "\033[32m✓\033[0m",
-      'failure' => "\033[31m⨯\033[0m",
-      'skipped' => "\033[33m⦾\033[0m",
-    ];
-    static $counts= [
-      'success' => "\033[32m%d succeeded\033[0m",
-      'failure' => "\033[31m%d failed\033[0m",
-      'skipped' => "\033[33m%d skipped\033[0m",
-    ];
-
     $timer= new Timer();
     $overall= new Timer();
     $sources= new Sources();
     $metrics= new Metrics();
+    $output= new ConsoleOutput();
     $pass= [];
     for ($i= 0, $s= sizeof($args); $i < $s; $i++) {
       if ('--' === $args[$i]) {
@@ -86,80 +69,53 @@ class Runner {
     $overall->start();
     $failures= [];
     foreach ($sources->groups() as $group) {
-      Console::writef("\r> \033[44;1;37m RUN… \033[0m \033[37m%s\033[0m", $group->name());
+      $output->enter($group);
 
       // Check group prerequisites
       foreach ($group->prerequisites() as $prerequisite) {
         if (!$prerequisite->verify()) {
           $metrics->count['skipped']++;
-          Console::writeLinef(
-            "\r> %s \033[37m%s\033[1;32;3m // %s\033[0m\n",
-            $groups['skipped'],
-            $group->name(),
-            $prerequisite->requirement(false)
-          );
+          $output->skip($group, $prerequisite->requirement(false));
           continue 2;
         }
       }
 
       // Run tests in this group...
-      $grouped= [];
-      $before= $metrics->count['failure'];
+      $results= [];
+      $failed= false;
       try {
         $run= 0;
-        $s= sizeof($progress);
         foreach ($group->tests($pass) as $test) {
-          Console::writef("\r%s", $progress[$run % $s]);
+          $output->running($group, $test, $run);
 
           $timer->start();
           $outcome= $test->run();
           $timer->stop();
 
-          $grouped[]= $metrics->record($outcome, $timer->elapsedTime());
+          $output->finished($group, $test, $outcome);
           $run++;
+
+          $results[]= $metrics->record($outcome, $timer->elapsedTime());
+
+          if ('failure' === $outcome->kind()) {
+            $failed= true;
+            $failures[$group->name().'::'.$test->name()]= $outcome;
+          }
         }
 
-        if ($run) {
-          $status= $metrics->count['failure'] > $before ? 'failure' : 'success';
-          Console::writeLinef("\r> %s \033[37m%s\033[0m", $groups[$status], $group->name());
-        } else {
+        if (0 === $run) {
           $metrics->count['skipped']++;
-          Console::writeLinef(
-            "\r> %s \033[37m%s\033[1;32;3m // %s\033[0m",
-            $groups['skipped'],
-            $group->name(),
-            'No test cases declared in this group'
-          );
+          $output->skip($group, 'No test cases declared in this group');
+        } else if ($failed) {
+          $output->fail($group, $results);
+        } else {
+          $output->pass($group, $results);
         }
       } catch (GroupFailed $f) {
         $failures[$f->origin]= $f->failure();
         $metrics->count['failure']++;
-        Console::writeLinef(
-          "\r> %s \033[37m%s\033[1;32;3m // %s\033[0m",
-          $groups['stopped'],
-          $group->name(),
-          $f->getMessage()
-        );
+        $output->stop($group, $f->getMessage());
       }
-
-      // ...report test case summary
-      foreach ($grouped as $outcome) {
-        $kind= $outcome->kind();
-        Console::write('  ', $cases[$kind], ' ', str_replace("\n", "\n    ", $outcome->test));
-        switch ($kind) {
-          case 'success': Console::writeLine(); break;
-          case 'skipped': {
-            Console::writeLinef("\033[1;32;3m // Skip%s\033[0m", $outcome->reason ? ": {$outcome->reason}" : '');
-            break;
-          }
-          case 'failure': {
-            Console::writeLinef("\033[1;32;3m // Fail: %s\033[0m", $outcome->reason);
-            $failures[$group->name().'::'.$outcome->test]= $outcome;
-            break;
-          }
-        }
-      }
-      Console::writeLine();
     }
     $overall->stop();
 
@@ -171,40 +127,13 @@ class Runner {
       return 2;
     }
 
-    // ...finally, output all failures
-    foreach ($failures as $location => $failure) {
-      Console::writeLinef(
-        "\033[31m⨯ %s\033[0m\n  \033[37;1m%s\033[0m\n%s\n",
-        $location,
-        $failure->reason,
-        $failure->trace('    ')
-      );
-    }
-
-    // Print out summary of test run
-    $summary= [];
-    foreach (['success', 'skipped', 'failure'] as $metric) {
-      if ($metrics->count[$metric]) {
-        $summary[]= sprintf($counts[$metric], $metrics->count[$metric]);
-      }
-    }
-
+    // ...finally, output all failures and a summary
     $rt= Runtime::getInstance();
-    Console::writeLinef(
-      "\033[37mTest cases:\033[0m  %s",
-      implode(', ', $summary)
+    $output->summary(
+      $metrics->using($rt->memoryUsage(), $rt->peakMemoryUsage()),
+      $overall->elapsedTime(),
+      $failures
     );
-    Console::writeLinef(
-      "\033[37mMemory used:\033[0m %.2f kB (%.2f kB peak)",
-      $rt->memoryUsage() / 1000,
-      $rt->peakMemoryUsage() / 1000
-    );
-    Console::writeLinef(
-      "\033[37mTime taken:\033[0m  %.3f seconds (%.3f seconds overall)",
-      $metrics->elapsed,
-      $overall->elapsedTime()
-    );
-
     return $metrics->count['failure'] ? 1 : 0;
   }
 }
