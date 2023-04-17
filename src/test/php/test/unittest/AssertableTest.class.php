@@ -17,19 +17,36 @@ class AssertableTest {
     yield [function($v) { return $v * 2; }];
   }
 
+  /** @return iterable */
+  private function succeeding() {
+    yield [(new Assertable($this))->isEqualTo($this)];
+    yield [(new Assertable($this))->isNotEqualTo(null)];
+    yield [(new Assertable($this))->isInstanceOf(self::class)];
+    yield [(new Assertable(true))->isTrue()];
+    yield [(new Assertable(false))->isFalse()];
+    yield [(new Assertable(null))->isNull()];
+  }
+
   #[Test]
   public function can_create() {
     new Assertable($this);
   }
 
   #[Test]
-  public function returns_self_on_success() {
-    Assert::instance(Assertable::class, (new Assertable($this))->isEqualTo($this));
+  public function assert_that_dsl() {
+    Assert::equals(Assert::that($this), new Assertable($this));
   }
 
-  #[Test, Expect(AssertionFailed::class)]
+  #[Test, Values(from: 'succeeding')]
+  public function returns_self_on_success($test) {
+    Assert::instance(Assertable::class, $test);
+  }
+
+  #[Test]
   public function throws_assertion_failed_on_error() {
-    (new Assertable($this))->isEqualTo(null);
+    Assert::throws(AssertionFailed::class, function() {
+      (new Assertable($this))->isEqualTo(null);
+    });
   }
 
   #[Test]
