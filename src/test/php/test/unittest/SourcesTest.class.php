@@ -46,4 +46,37 @@ class SourcesTest {
       ->isEqualTo(['from-first', 'from-second'])
     ;
   }
+
+  #[Test]
+  public function empty_string_representation() {
+    Assert::equals('test.source.Sources[]', (new Sources())->toString());
+  }
+
+  #[Test]
+  public function string_representation_with_one() {
+    $sources= new Sources(new TestingSource(new TestingGroup('test-1')));
+
+    Assert::equals(
+      'test.source.Sources[test.unittest.TestingSource]',
+      $sources->toString()
+    );
+  }
+
+  #[Test]
+  public function string_representation_with_many() {
+    $sources= new Sources(
+      new TestingSource(new TestingGroup('test-1')),
+      new TestingSource(new TestingGroup('test-2')),
+      new TestingSource(new TestingGroup('test-3'))
+    );
+
+    Assert::equals(
+      "test.source.Sources@[\n".
+      "  test.unittest.TestingSource\n".
+      "  test.unittest.TestingSource\n".
+      "  test.unittest.TestingSource\n".
+      "]",
+      $sources->toString()
+    );
+  }
 }
