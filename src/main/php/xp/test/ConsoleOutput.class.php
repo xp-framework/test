@@ -108,7 +108,7 @@ class ConsoleOutput extends Report {
       "\r> %s \033[37m%s\033[1;32;3m // %s\033[0m\n",
       self::GROUPS['skipped'],
       $group->name(),
-      $reson
+      $reason
     );
   }
 
