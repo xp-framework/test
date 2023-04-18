@@ -6,6 +6,7 @@ use test\outcome\{Failed, Skipped};
 use test\verify\Verification;
 use test\{After, Before, Expect, Ignore, Provider, Test};
 
+/** @test test.unittest.TestClassTest */
 class TestClass extends Group {
   private $context, $selection;
 
