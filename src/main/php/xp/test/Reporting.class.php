@@ -12,6 +12,12 @@ class Reporting extends Report {
     return $this;
   }
 
+  public function start($sources) {
+    foreach ($this->delegates as $delegate) {
+      $delegate->start($sources);
+    }
+  }
+
   public function enter($group) {
     foreach ($this->delegates as $delegate) {
       $delegate->enter($group);

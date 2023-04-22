@@ -91,8 +91,9 @@ class Runner {
       return 2;
     }
 
-    $overall->start();
     $failures= [];
+    $overall->start();
+    $reporting->start($sources);
     foreach ($sources->groups() as $group) {
       $reporting->enter($group);
 

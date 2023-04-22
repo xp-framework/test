@@ -3,6 +3,14 @@
 abstract class Report {
 
   /**
+   * Called when the test run starts
+   *
+   * @param  test.source.Sources $sources
+   * @return void
+   */
+  public function start($sources) { }
+
+  /**
    * Called when entering a group. The group ends with one of the following:
    *
    * - `pass()` - All of the tests in this group passed
