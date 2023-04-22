@@ -83,7 +83,7 @@ class Runner {
           $sources->add(new FromClass($args[$i]));
         }
       }
-      $reporting->delegated() || $reporting->add(new ConsoleOutput());
+      $reporting->delegated() || $reporting->add(new Grouped());
     } catch (Throwable $t) {
       Console::writeLine("\033[33m@", (new XPClass(self::class))->getClassLoader(), "\033[0m");
       Console::writeLine("\033[41;1;37m ERROR \033[0;1;37m Invalid command line argument(s)\033[0m\n");
