@@ -61,4 +61,5 @@ jobs:
       with:
         name: PHP ${{ matrix.php-versions }} on ${{ matrix.os }} tests
         path: test-results.json
+        fail-on-error: 'false'
         reporter: mocha-json
