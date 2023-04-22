@@ -53,4 +53,12 @@ jobs:
         echo "vendor/autoload.php" > composer.pth
 
     - name: Run test suite
-      run: sh xp-run xp.test.Runner -r Dots src/test/php
+      run: sh xp-run xp.test.Runner -r Dots -r JSON,test-results.json src/test/php
+
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()
+      with:
+        name: Test results
+        path: test-results.json
+        reporter: mocha-json
