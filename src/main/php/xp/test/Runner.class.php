@@ -112,13 +112,13 @@ class Runner {
       try {
         $run= 0;
         foreach ($group->tests($pass) as $test) {
-          $reporting->running($group, $test, $run);
+          $reporting->running($group, $test->case, $run);
 
           $timer->start();
           $outcome= $test->run();
           $timer->stop();
 
-          $reporting->finished($group, $test, $outcome);
+          $reporting->finished($group, $test->case, $outcome);
           $run++;
 
           $results[]= $metrics->record($outcome, $timer->elapsedTime());

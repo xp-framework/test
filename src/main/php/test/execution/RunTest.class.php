@@ -4,7 +4,7 @@ use lang\Runnable;
 use test\Outcome;
 
 class RunTest implements Runnable {
-  private $case, $arguments;
+  public $case, $arguments;
 
   /**
    * Runs a given test case with the supplied arguments
