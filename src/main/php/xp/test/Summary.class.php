@@ -3,7 +3,7 @@
 use util\cmd\Console;
 
 trait Summary {
-  const COUNTS= [
+  private static $COUNTS= [
     'success' => "\033[32m%d succeeded\033[0m",
     'failure' => "\033[31m%d failed\033[0m",
     'skipped' => "\033[33m%d skipped\033[0m",
@@ -25,7 +25,7 @@ trait Summary {
   private function metrics($metrics, $overall) {
     $summary= [];
     foreach ($metrics->count as $metric => $count) {
-      $count && $summary[]= sprintf(self::COUNTS[$metric], $count);
+      $count && $summary[]= sprintf(self::$COUNTS[$metric], $count);
     }
 
     Console::writeLinef(
