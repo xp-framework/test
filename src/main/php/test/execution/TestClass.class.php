@@ -24,6 +24,9 @@ class TestClass extends Group {
   /** @return string */
   public function name() { return $this->context->type->name(); }
 
+  /** @return ?string */
+  public function declaringFile() { return $this->context->type->class()->reflect()->getFileName(); }
+
   /** @return iterable */
   public function prerequisites() {
     foreach ($this->context->annotations(Verification::class) as $verify) {
