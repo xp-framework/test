@@ -4,7 +4,7 @@ use test\execution\TestClass;
 use test\verify\Runtime;
 use test\{Assert, Test};
 
-#[Runtime(php: '>=7.0.0')]
+#[Runtime(php: '>=7.0.0', extensions: ['core'])]
 class TestClassTest {
   
   #[Test]
