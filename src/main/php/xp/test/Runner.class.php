@@ -115,10 +115,10 @@ class Runner {
           $reporting->running($group, $test->case, $run);
 
           $timer->start();
-          $outcome= $test->run();
+          $outcome= $test->run($timer);
           $timer->stop();
 
-          $reporting->finished($group, $test->case, $outcome);
+          $reporting->finished($group, $test->case, $outcome, $timer->elapsedTime());
           $run++;
 
           $results[]= $metrics->record($outcome, $timer->elapsedTime());
