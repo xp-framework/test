@@ -2,6 +2,7 @@
 
 use lang\Runnable;
 use test\Outcome;
+use util\profiling\Timer;
 
 class RunTest implements Runnable {
   public $case, $arguments;
@@ -20,8 +21,17 @@ class RunTest implements Runnable {
   /** @return string */
   public function name() { return $this->case->name(); }
 
-  /** Runs this test case and returns its outcome */
-  public function run(): Outcome {
-    return $this->case->run($this->arguments);
+  /**
+   * Runs this test case and returns its outcome. If given a timer, the
+   * outcome will have the elapsed time attached to it.
+   */
+  public function run(Timer $timer= null): Outcome {
+    if (null === $timer) return $this->case->run($this->arguments);
+
+    $timer->start();
+    $outcome= $this->case->run($this->arguments);
+    $timer->stop();
+
+    return $outcome->timed($timer->elapsedTime());
   }
 }

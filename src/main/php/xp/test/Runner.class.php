@@ -113,15 +113,11 @@ class Runner {
         $run= 0;
         foreach ($group->tests($pass) as $test) {
           $reporting->running($group, $test->case, $run);
-
-          $timer->start();
           $outcome= $test->run($timer);
-          $timer->stop();
+          $reporting->finished($group, $test->case, $outcome);
 
-          $reporting->finished($group, $test->case, $outcome, $timer->elapsedTime());
+          $results[]= $metrics->record($outcome);
           $run++;
-
-          $results[]= $metrics->record($outcome, $timer->elapsedTime());
 
           if ('failure' === $outcome->kind()) {
             $failed= true;

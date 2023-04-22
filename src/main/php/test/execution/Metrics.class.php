@@ -8,9 +8,9 @@ class Metrics {
   public $memoryUsed= 0;
   public $peakMemoryUsed= 0;
 
-  public function record(Outcome $outcome, float $elapsed): Outcome {
+  public function record(Outcome $outcome): Outcome {
     $this->count[$outcome->kind()]++;
-    $this->elapsed+= $elapsed;
+    $this->elapsed+= $outcome->elapsed;
     return $outcome;
   }
 

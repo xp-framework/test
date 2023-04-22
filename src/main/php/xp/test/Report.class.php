@@ -39,10 +39,9 @@ abstract class Report {
    * @param  test.execution.TestClass $group
    * @param  test.execution.TestCase $test
    * @param  test.Outcome $outcome
-   * @param  float $elapsed
    * @return void
    */
-  public function finished($group, $test, $outcome, $elapsed) { }
+  public function finished($group, $test, $outcome) { }
 
   /**
    * Pass an entire group

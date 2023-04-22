@@ -30,9 +30,9 @@ class Reporting extends Report {
     }
   }
 
-  public function finished($group, $test, $outcome, $elapsed) {
+  public function finished($group, $test, $outcome) {
     foreach ($this->delegates as $delegate) {
-      $delegate->finished($group, $test, $outcome, $elapsed);
+      $delegate->finished($group, $test, $outcome);
     }
   }
 
