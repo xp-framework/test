@@ -3,6 +3,14 @@
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #20: Extract output into a dedicated classes, reports.
+  - The command line option `-r` select report to use
+  - The default report is called *Grouped*
+  - A minimalistic report called *Dots* prints a `.` for each test
+  - Multiple reports can be used
+  - Report arguments can be passed via `-r [Report],[Arg1],[Arg2]`
+  (@thekid)
+
 ## 1.3.1 / 2023-04-15
 
 * Merged PR #19: Catch exceptions from test setup and make tests fail,
