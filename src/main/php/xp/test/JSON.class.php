@@ -105,7 +105,7 @@ class JSON extends Report {
       }
     }
 
-    $this->out->write(json_encode($report));
+    $this->out->write(json_encode($report, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
     $this->out->close();
   }
 }
