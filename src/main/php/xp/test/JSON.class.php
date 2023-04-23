@@ -12,7 +12,7 @@ class JSON extends Report {
   const SLOW= 0.075;
   const DATES= 'Y-m-d\TH:i:s.v\Z';
 
-  private $out, $start;
+  private $out, $start, $suites;
   private $results= [
     'success' => [],
     'failure' => [],
@@ -33,6 +33,17 @@ class JSON extends Report {
   /** Called when test run starts */
   public function start($sources) {
     $this->start= Date::now();
+    $this->suites= 0;
+  }
+
+  /**
+   * Enter a group
+   *
+   * @param  test.execution.TestClass $group
+   * @return void
+   */
+  public function enter($group) {
+    $this->suites++;
   }
 
   /** Called when a test finished */
@@ -72,7 +83,7 @@ class JSON extends Report {
     $utc= TimeZone::getByName('UTC');
     $report= [
       'stats' => [
-        'suites'   => 1,
+        'suites'   => $this->suites,
         'tests'    => array_sum($metrics->count),
         'passes'   => $metrics->count['success'],
         'pending'  => $metrics->count['skipped'],
