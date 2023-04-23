@@ -16,3 +16,5 @@ jobs:
         name: 'Test report'
         path: 'test-results-*.json'
         reporter: mocha-json
+        list-suites: all
+        list-tests: failed
