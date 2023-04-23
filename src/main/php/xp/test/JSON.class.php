@@ -56,8 +56,8 @@ class JSON extends Report {
     }
 
     $this->results[$outcome->kind()][]= [
-      'title'        => $test->name(),
-      'fullTitle'    => $group->name().'::'.$test->name(),
+      'title'        => $outcome->test,
+      'fullTitle'    => $group->name().' '.$outcome->test,
       'file'         => $group->declaringFile(),
       'duration'     => (int)($outcome->elapsed * 1000),
       'currentRetry' => 0,
@@ -90,7 +90,7 @@ class JSON extends Report {
     // Reference all results inside the tests key
     foreach ($this->results as $kind => $results) {
       foreach ($results as $result) {
-        $report['tests'][]= &$result;
+        $report['tests'][]= $result;
       }
     }
 
