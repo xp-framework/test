@@ -53,4 +53,12 @@ jobs:
         echo "vendor/autoload.php" > composer.pth
 
     - name: Run test suite
-      run: sh xp-run xp.test.Runner -r Dots src/test/php
+      run: sh xp-run xp.test.Runner -r Dots -r JSON,test-results-${{ matrix.php-versions }}-${{ matrix.os }}.json src/test/php
+
+    - name: Test Report
+      uses: actions/upload-artifact@v3
+      if: success() || failure()
+      with:
+        name: test-results
+        path: test-results-*.json
+        retention-days: 1
