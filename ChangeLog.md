@@ -3,6 +3,8 @@
 
 ## ?.?.? / ????-??-??
 
+## 1.4.0 / 2023-04-23
+
 * Merged PR #21: Add JSON report, producing test reports in JSON format
   compatible with Mocha, see https://mochajs.org/#json. This can be used
   to integrate with https://github.com/marketplace/actions/test-reporter,
