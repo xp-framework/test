@@ -10,10 +10,11 @@ jobs:
   report:
     runs-on: ubuntu-latest
     steps:
-    - uses: dorny/test-reporter@v1
+    - name: Test report
+      uses: dorny/test-reporter@v1
       with:
         artifact: test-results
-        name: 'Test report'
+        name: 'Test report summary'
         path: 'test-results-*.json'
         reporter: mocha-json
         list-suites: all
