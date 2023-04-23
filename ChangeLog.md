@@ -5,7 +5,9 @@
 
 * Merged PR #21: Add JSON report, producing test reports in JSON format
   compatible with Mocha, see https://mochajs.org/#json. This can be used
-  to integrate with https://github.com/marketplace/actions/test-reporter
+  to integrate with https://github.com/marketplace/actions/test-reporter,
+  see https://github.com/xp-framework/test/actions/runs/4777443690 at the
+  very bottom of the page.
   (@thekid)
 * Merged PR #20: Extract output into a dedicated classes, reports.
   - The command line option `-r` select report to use
