@@ -3,6 +3,10 @@
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #23: Implement `Assert::matches()`, which checks the given
+  string value matches a regular expression.
+  (@thekid)
+
 ## 1.4.0 / 2023-04-23
 
 * Merged PR #21: Add JSON report, producing test reports in JSON format
