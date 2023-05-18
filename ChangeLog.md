@@ -3,6 +3,11 @@
 
 ## ?.?.? / ????-??-??
 
+## 1.5.1 / 2023-05-18
+
+* Fixed support for cleaning up errors with `xp::gc()` inside tests
+  (@thekid)
+
 ## 1.5.0 / 2023-05-18
 
 * Merged PR #22: Make warnings raised during test execution fail these
