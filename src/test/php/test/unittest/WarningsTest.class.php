@@ -33,9 +33,10 @@ class WarningsTest {
   public function fopen_nonexistant_file() {
     $r= $this->execute(function() { fopen('$', 'r'); });
 
-    Assert::that($r->cause->getStackTrace()[0]->message)
-      ->is(new Matches('/E_WARNING: fopen.+: No such file or directory/i'))
-    ;
+    Assert::matches(
+      '/E_WARNING: fopen.+: No such file or directory/i',
+      $r->cause->getStackTrace()[0]->message
+    );
   }
 
   #[Test]
