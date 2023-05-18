@@ -82,7 +82,7 @@ abstract class Assert {
    * Matches shorthand
    *
    * @param  string $pattern
-   * @param  callable $actual
+   * @param  mixed $actual
    * @return void
    */
   public static function matches($pattern, $actual) {
