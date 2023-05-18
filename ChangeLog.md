@@ -3,6 +3,11 @@
 
 ## ?.?.? / ????-??-??
 
+## 1.5.0 / 2023-05-18
+
+* Merged PR #22: Make warnings raised during test execution fail these
+  tests, adding back a previously unported feature.
+  (@thekid)
 * Merged PR #23: Implement `Assert::matches()`, which checks the given
   string value matches a regular expression.
   (@thekid)
