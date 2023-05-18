@@ -73,7 +73,7 @@ class TestCase {
         return new Failed($name, 'Did not catch expected '.$this->expectation->pattern(), null);
       } else if ($warnings) {
         \xp::gc();
-        return new Failed($name, 'Succeeded but raised warnings', new Warnings($warnings));
+        return new Failed($name, 'Succeeded but raised '.sizeof($warnings).' warning(s)', new Warnings($warnings));
       } else {
         return new Succeeded($name);
       }
