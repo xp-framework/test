@@ -4,7 +4,7 @@ use Throwable as Any;
 use lang\reflection\Type;
 use lang\{Throwable, Runnable};
 use test\outcome\{Succeeded, Skipped, Failed};
-use test\{AssertionFailed, Expect, Outcome, Prerequisite};
+use test\{AssertionFailed, Expect, Outcome, Prerequisite, Warnings};
 use util\Objects;
 
 class TestCase {
@@ -55,7 +55,10 @@ class TestCase {
    * @return Outcome
    */
   public function run($arguments= []) {
-    \xp::gc();
+    $warnings= [];
+    set_error_handler(function($kind, $message, $file, $line) use(&$warnings) {
+      $warnings[]= [$kind, $message, $file, $line];
+    });
     try {
       if ($arguments) {
         $name= $this->name.Objects::stringOf($arguments);
@@ -65,10 +68,12 @@ class TestCase {
         ($this->run)();
       }
 
-      if (null === $this->expectation) {
-        return new Succeeded($name);
-      } else {
+      if ($this->expectation) {
         return new Failed($name, 'Did not catch expected '.$this->expectation->pattern(), null);
+      } else if ($warnings) {
+        return new Failed($name, 'Succeeded but raised warnings', new Warnings($warnings));
+      } else {
+        return new Succeeded($name);
       }
     } catch (Any $e) {
       $t= Throwable::wrap($e);
@@ -86,6 +91,8 @@ class TestCase {
       } else {
         return new Succeeded($name);
       }
+    } finally {
+      restore_error_handler();
     }
   }
 }

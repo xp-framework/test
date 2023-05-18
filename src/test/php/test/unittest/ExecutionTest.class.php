@@ -79,6 +79,17 @@ class ExecutionTest {
   }
 
   #[Test]
+  public function tests_raising_warnings_fail() {
+    Assert::equals(['fixture' => Failed::class], $this->execute(new class() {
+
+      #[Test]
+      public function fixture() {
+        trigger_error('Test');
+      }
+    }));
+  }
+
+  #[Test]
   public function skipped_test() {
     Assert::equals(['fixture' => Skipped::class], $this->execute(new class() {
 
