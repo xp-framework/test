@@ -48,6 +48,7 @@ The following shorthand methods exist on the `Assert` class:
 * `false(mixed $actual)`  - check a given value is equal to the *false* boolean
 * `null(mixed $actual)` - check a given value is *null*
 * `instance(string|lang.Type $expected, mixed $actual)` - check a given value is an instance of the given type.
+* `matches(string $pattern, mixed $actual)` - verify the given value matches a given regular expression.
 * `throws(string|lang.Type $expected, callable $actual)` - verify the given callable raises an exception.
 
 Expected failures
