@@ -58,6 +58,7 @@ class TestCase {
     $warnings= [];
     set_error_handler(function($kind, $message, $file, $line) use(&$warnings) {
       $warnings[]= [$kind, $message, $file, $line];
+      __error($kind, $message, $file, $line);
     });
     try {
       if ($arguments) {
@@ -71,6 +72,7 @@ class TestCase {
       if ($this->expectation) {
         return new Failed($name, 'Did not catch expected '.$this->expectation->pattern(), null);
       } else if ($warnings) {
+        \xp::gc();
         return new Failed($name, 'Succeeded but raised warnings', new Warnings($warnings));
       } else {
         return new Succeeded($name);
