@@ -33,7 +33,7 @@ class MatchesTest {
     }));
   }
 
-  #[Test, Expect(class: FormatException::class, message: 'Internal error in not.a.regex')]
+  #[Test, Expect(class: FormatException::class, message: 'Using not.a.regex')]
   public function invalid_pattern() {
     (new Matches('not.a.regex'))->matches('Test');
   }

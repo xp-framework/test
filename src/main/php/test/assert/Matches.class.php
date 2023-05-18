@@ -13,7 +13,7 @@ class Matches extends Condition {
   public function matches($value) {
     if (is_string($value) || is_object($value) && method_exists($value, '__toString')) {
       if (false === ($r= preg_match($this->pattern, $value))) {
-        throw new FormatException(preg_last_error_msg().' in '.$this->pattern);
+        throw new FormatException('Using '.$this->pattern);
       }
       return $r > 0;
     }
