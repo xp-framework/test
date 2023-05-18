@@ -1,7 +1,7 @@
 <?php namespace test;
 
 use lang\Type;
-use test\assert\{Assertable, Equals, Instance};
+use test\assert\{Assertable, Equals, Matches, Instance};
 
 abstract class Assert {
 
@@ -76,6 +76,17 @@ abstract class Assert {
    */
   public static function instance($expected, $actual) {
     (new Assertable($actual))->is(new Instance($expected));
+  }
+
+  /**
+   * Matches shorthand
+   *
+   * @param  string $pattern
+   * @param  callable $actual
+   * @return void
+   */
+  public static function matches($pattern, $actual) {
+    (new Assertable($actual))->is(new Matches($pattern));
   }
 
   /**
