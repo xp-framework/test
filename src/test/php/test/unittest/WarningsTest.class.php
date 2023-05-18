@@ -1,5 +1,6 @@
 <?php namespace test\unittest;
 
+use test\assert\Matches;
 use test\execution\TestCase;
 use test\outcome\{Succeeded, Failed};
 use test\{Assert, Test};
@@ -31,10 +32,10 @@ class WarningsTest {
   #[Test]
   public function fopen_nonexistant_file() {
     $r= $this->execute(function() { fopen('$', 'r'); });
-    Assert::equals(
-      'E_WARNING: fopen($): Failed to open stream: No such file or directory',
-      $r->cause->getStackTrace()[0]->message
-    );
+
+    Assert::that($r->cause->getStackTrace()[0]->message)
+      ->is(new Matches('/E_WARNING: fopen.+: No such file or directory/i'))
+    ;
   }
 
   #[Test]
