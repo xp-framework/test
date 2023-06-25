@@ -3,6 +3,10 @@
 
 ## ?.?.? / ????-??-??
 
+## 1.5.2 / 2023-05-25
+
+* Fixed *Call to undefined method Returning::name()* - @thekid
+
 ## 1.5.1 / 2023-05-18
 
 * Fixed support for cleaning up errors with `xp::gc()` inside tests
