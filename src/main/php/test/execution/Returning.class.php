@@ -17,6 +17,9 @@ class Returning implements Runnable {
     $this->outcome= $outcome;
   }
 
+  /** @return string */
+  public function name() { return $this->case->name(); }
+
   /** @return iterable */
   public function targets() { return [$this]; }
 
