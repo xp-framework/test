@@ -56,7 +56,7 @@ jobs:
       run: sh xp-run xp.test.Runner -r Dots -r JSON,test-results-${{ matrix.php-versions }}-${{ matrix.os }}.json src/test/php
 
     - name: Test Report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       if: success() || failure()
       with:
         name: test-results
