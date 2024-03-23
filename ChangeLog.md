@@ -5,6 +5,9 @@
 
 ## 2.0.0 / 2024-03-23
 
+This second major release upgrades this library to support only the latest
+PHP 7 version, PHP 7.4, in alignment with XP 12. See xp-framework/rfc#343
+
 * Changed `test.verify.Runtime` to use *PHP_OS_FAMILY* constant instead
   of *PHP_OS*. The former has been available since PHP 7.2
   (@thekid)
