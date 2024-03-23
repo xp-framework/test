@@ -26,7 +26,7 @@ class Runtime implements Verification {
    * @return iterable
    */
   public function assertions(Context $context) {
-    null === $this->os || yield new Assertion(PHP_OS, new Matches('/'.$this->os.'/i'));
+    null === $this->os || yield new Assertion(PHP_OS_FAMILY, new Matches('/'.$this->os.'/i'));
     null === $this->php || yield new Assertion(PHP_VERSION, new RequiredVersion('PHP', $this->php));
 
     foreach ($this->extensions as $extension) {

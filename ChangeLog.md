@@ -5,6 +5,9 @@
 
 ## 2.0.0 / 2024-03-23
 
+* Changed `test.verify.Runtime` to use *PHP_OS_FAMILY* constant instead
+  of *PHP_OS*. The former has been available since PHP 7.2
+  (@thekid)
 * Made this library compatible with XP 12:
   - Dropped support for PHP < 7.4
   - Adopted nullable type syntax, array unpacking
