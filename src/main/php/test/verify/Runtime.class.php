@@ -13,7 +13,7 @@ class Runtime implements Verification {
    * @param  ?string $php PHP version constraint
    * @param  array<string> $extensions PHP extensions to check for
    */
-  public function __construct($os= null, $php= null, array $extensions= []) {
+  public function __construct(?string $os= null, ?string $php= null, array $extensions= []) {
     $this->os= $os;
     $this->php= $php;
     $this->extensions= $extensions;

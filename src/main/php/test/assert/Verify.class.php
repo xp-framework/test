@@ -3,7 +3,7 @@
 class Verify extends Condition {
   private $description;
 
-  public function __construct($description= null) {
+  public function __construct(?string $description= null) {
     $this->description= $description;
   }
 

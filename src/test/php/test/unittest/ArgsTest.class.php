@@ -15,7 +15,7 @@ class ArgsTest {
   public function select_all($arguments) {
     Assert::equals(
       $arguments,
-      iterator_to_array((new Args())->values(new Context(Reflection::type(self::class), $arguments)))
+      [...(new Args())->values(new Context(Reflection::type(self::class), $arguments))]
     );
   }
 
@@ -23,7 +23,7 @@ class ArgsTest {
   public function select_first($arguments) {
     Assert::equals(
       [$arguments[0]],
-      iterator_to_array((new Args(0))->values(new Context(Reflection::type(self::class), $arguments)))
+      [...(new Args(0))->values(new Context(Reflection::type(self::class), $arguments))]
     );
   }
 
@@ -31,25 +31,25 @@ class ArgsTest {
   public function select_named($arguments) {
     Assert::equals(
       ['test'],
-      iterator_to_array((new Args('dsn'))->values(new Context(Reflection::type(self::class), $arguments)))
+      [...(new Args('dsn'))->values(new Context(Reflection::type(self::class), $arguments))]
     );
   }
 
   #[Test, Expect(IllegalArgumentException::class)]
   public function missing_positional_argument() {
-    iterator_to_array((new Args(0))->values(new Context(Reflection::type(self::class), [])));
+    (new Args(0))->values(new Context(Reflection::type(self::class), []))->next();
   }
 
   #[Test, Expect(IllegalArgumentException::class)]
   public function missing_named_argument() {
-    iterator_to_array((new Args('dsn'))->values(new Context(Reflection::type(self::class), [])));
+    (new Args('dsn'))->values(new Context(Reflection::type(self::class), []))->next();
   }
 
   #[Test, Values([null, 'localhost'])]
   public function optional_positional_argument($default) {
     Assert::equals(
       [$default],
-      iterator_to_array((new Args([0 => $default]))->values(new Context(Reflection::type(self::class), [])))
+      [...(new Args([0 => $default]))->values(new Context(Reflection::type(self::class), []))]
     );
   }
 
@@ -57,7 +57,7 @@ class ArgsTest {
   public function optional_named_argument($default) {
     Assert::equals(
       [$default],
-      iterator_to_array((new Args(['dsn' => $default]))->values(new Context(Reflection::type(self::class), [])))
+      [...(new Args(['dsn' => $default]))->values(new Context(Reflection::type(self::class), []))]
     );
   }
 }

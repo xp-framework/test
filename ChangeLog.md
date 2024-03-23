@@ -3,6 +3,13 @@
 
 ## ?.?.? / ????-??-??
 
+## 2.0.0 / 2024-03-23
+
+* Made this library compatible with XP 12:
+  - Dropped support for PHP < 7.4
+  - Adopted nullable type syntax, array unpacking
+  (@thekid)
+
 ## 1.5.2 / 2023-05-25
 
 * Fixed *Call to undefined method Returning::name()* - @thekid

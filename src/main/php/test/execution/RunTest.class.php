@@ -25,7 +25,7 @@ class RunTest implements Runnable {
    * Runs this test case and returns its outcome. If given a timer, the
    * outcome will have the elapsed time attached to it.
    */
-  public function run(Timer $timer= null): Outcome {
+  public function run(?Timer $timer= null): Outcome {
     if (null === $timer) return $this->case->run($this->arguments);
 
     $timer->start();

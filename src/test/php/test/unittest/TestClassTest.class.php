@@ -19,7 +19,7 @@ class TestClassTest {
 
   #[Test]
   public function prerequisites() {
-    $prerequisites= iterator_to_array((new TestClass($this))->prerequisites());
+    $prerequisites= [...(new TestClass($this))->prerequisites()];
 
     Assert::instance('test.assert.Assertion[]', $prerequisites);
     Assert::equals(2, sizeof($prerequisites));

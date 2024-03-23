@@ -148,7 +148,7 @@ class Assertable {
    * @param  ?string $message
    * @return self
    */
-  public function throws($type, $message= null) {
+  public function throws($type, ?string $message= null) {
     $expect= new Expect($type instanceof Type ? $type->literal() : $type, $message);
     try {
       ($this->value)();

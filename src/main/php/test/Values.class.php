@@ -19,7 +19,7 @@ class Values implements Provider {
    * @param  iterable $list
    * @param  ?string $from
    */
-  public function __construct($list= [], $from= null) {
+  public function __construct($list= [], ?string $from= null) {
     $this->list= $list;
     $this->from= $from;
   }

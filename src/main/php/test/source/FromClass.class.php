@@ -11,10 +11,10 @@ class FromClass extends Source {
   /**
    * Creates a class source
    *
-   * @param string|object|XPClass|Type|ReflectionClass $arg
-   * @param ?string $selection
+   * @param  string|object|XPClass|Type|ReflectionClass $arg
+   * @param  ?string $selection
    */
-  public function __construct($arg, $selection= null) {
+  public function __construct($arg, ?string $selection= null) {
     $this->type= Reflection::type($arg);
     $this->selection= $selection;
   }
@@ -22,8 +22,8 @@ class FromClass extends Source {
   /** Returns the class given */
   public function type(): Type { return $this->type; }
 
-  /** @return ?string */
-  public function selection() { return $this->selection; }
+  /** Returns the selection, if any */
+  public function selection(): ?string { return $this->selection; }
 
   /** @return iterable */
   public function groups() {

@@ -6,9 +6,9 @@
   "description" : "Testing for the XP Framework",
   "keywords": ["module", "xp"],
   "require" : {
-    "xp-framework/core": "^11.0",
+    "xp-framework/core": "^12.0 | ^11.0",
     "xp-framework/reflection": "^2.9",
-    "php" : ">=7.0.0"
+    "php" : ">=7.4.0"
   },
   "bin": ["bin/xp.xp-framework.test"],
   "autoload" : {

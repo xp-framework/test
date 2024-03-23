@@ -14,13 +14,8 @@ use lang\Throwable;
 class Expect {
   private $class, $message;
 
-  /**
-   * Creates a values annotation
-   *
-   * @param  string $class
-   * @param  ?string $message
-   */
-  public function __construct(string $class, string $message= null) {
+  /** Creates a new `Expect` annotation */
+  public function __construct(string $class, ?string $message= null) {
     $this->class= $class;
     $this->message= $message;
   }

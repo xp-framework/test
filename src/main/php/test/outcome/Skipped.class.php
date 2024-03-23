@@ -11,5 +11,6 @@ class Skipped extends Outcome {
     $this->reason= $reason;
   }
 
+  /** @return string */
   public function kind() { return 'skipped'; }
 }

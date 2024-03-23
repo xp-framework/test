@@ -14,9 +14,9 @@ class TestClass extends Group {
    * Creates an instance for a given class
    *
    * @param  string|object|XPClass|Type|ReflectionClass $arg
-   * @param ?string $selection
+   * @param  ?string $selection
    */
-  public function __construct($arg, $selection= null) {
+  public function __construct($arg, ?string $selection= null) {
     $this->context= new Context($arg instanceof Type ? $arg : Reflection::type($arg));
     $this->selection= $selection;
   }

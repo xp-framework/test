@@ -6,12 +6,13 @@ use test\Outcome;
 class Failed extends Outcome {
   public $reason, $cause;
 
-  public function __construct($test, $reason, Throwable $cause= null) {
+  public function __construct($test, $reason, ?Throwable $cause= null) {
     parent::__construct($test);
     $this->reason= $reason;
     $this->cause= $cause;
   }
 
+  /** @return string */
   public function kind() { return 'failure'; }
 
   /** @return string */

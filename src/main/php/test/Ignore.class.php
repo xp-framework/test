@@ -6,8 +6,8 @@ use test\verify\Verification;
 class Ignore implements Verification, Prerequisite {
   private $reason;
 
-  /** @param ?string $reason */
-  public function __construct($reason= null) { $this->reason= $reason; }
+  /** Creates a new `Ignore` annotations */
+  public function __construct(?string $reason= null) { $this->reason= $reason; }
 
   /**
    * Describes requirement
