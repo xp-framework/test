@@ -3,6 +3,12 @@
 
 ## ?.?.? / ????-??-??
 
+## 2.1.0 / 2024-03-28
+
+* Made `FromDirectory` consistent with other source implementations in
+  regard to how it filters the types returned
+  (@thekid)
+
 ## 2.0.0 / 2024-03-23
 
 This second major release upgrades this library to support only the latest

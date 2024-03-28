@@ -35,7 +35,9 @@ class FromPackage extends Source {
   /** @return iterable */
   public function groups() {
     foreach ($this->typesIn($this->package) as $type) {
-      if ($type->instantiable() && 0 === substr_compare($type->name(), 'Test', -4, 4)) yield new TestClass($type);
+      if ($type->instantiable() && 0 === substr_compare($type->name(), 'Test', -4, 4)) {
+        yield new TestClass($type);
+      }
     }
   }
 

@@ -1,7 +1,7 @@
 <?php namespace test\source;
 
 use io\{Folder, Path};
-use lang\{ClassLoader, FileSystemClassLoader, IllegalArgumentException};
+use lang\{ClassLoader, FileSystemClassLoader, IllegalArgumentException, Reflection};
 use test\execution\TestClass;
 
 class FromDirectory extends Source {
@@ -42,7 +42,7 @@ class FromDirectory extends Source {
       } else if (($p= strpos($entry->name(), '.')) && 0 === substr_compare($entry->name(), 'Test', $p - 4, 4)) {
         $uri= $entry->asURI();
         if ($loader= $cl->findUri($uri)) {
-          yield $loader->loadUri($uri);
+          yield Reflection::type($loader->loadUri($uri));
         }
       }
     }
@@ -51,8 +51,9 @@ class FromDirectory extends Source {
   /** @return iterable */
   public function groups() {
     foreach ($this->testClassesIn(ClassLoader::getDefault(), $this->folder) as $class) {
-      if ($class->isInterface() || $class->isTrait() || $class->getModifiers() & MODIFIER_ABSTRACT) continue;
-      yield new TestClass($class);
+      if ($class->instantiable()) {
+        yield new TestClass($class);
+      }
     }
   }
 

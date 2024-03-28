@@ -17,7 +17,7 @@ class FromFile extends Source {
     }
 
     if ($loader= ClassLoader::getDefault()->findUri($this->path)) {
-      $this->type= $loader->loadUri($this->path);
+      $this->type= Reflection::type($loader->loadUri($this->path));
       return;
     }
 
@@ -25,11 +25,11 @@ class FromFile extends Source {
   }
 
   /** Returns the type discovered from the file */
-  public function type(): Type { return Reflection::type($this->type); }
+  public function type(): Type { return $this->type; }
 
   /** @return iterable */
   public function groups() {
-    yield new TestClass($this->type());
+    yield new TestClass($this->type);
   }
 
   /** @return string */
