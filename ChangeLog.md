@@ -3,6 +3,8 @@
 
 ## ?.?.? / ????-??-??
 
+## 2.2.0 / 2025-09-06
+
 * Added PHP 8.5 to the test matrix, ensuring forward compatibility
   (@thekid)
 * Removed deprecated `E_STRICT` mapping from warnings. See these RFCs:
