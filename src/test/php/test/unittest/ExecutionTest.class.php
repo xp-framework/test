@@ -87,6 +87,7 @@ class ExecutionTest {
         trigger_error('Test');
       }
     }));
+    \xp::gc();
   }
 
   #[Test]
