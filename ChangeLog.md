@@ -3,6 +3,13 @@
 
 ## ?.?.? / ????-??-??
 
+* Added PHP 8.5 to the test matrix, ensuring forward compatibility
+  (@thekid)
+* Removed deprecated `E_STRICT` mapping from warnings. See these RFCs:
+  - https://wiki.php.net/rfc/reclassify_e_strict (7.0)
+  - https://wiki.php.net/rfc/deprecations_php_8_4 (8.4)
+  (@thekid)
+
 ## 2.1.0 / 2024-03-28
 
 * Made `FromDirectory` consistent with other source implementations in
