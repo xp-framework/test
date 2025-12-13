@@ -3,6 +3,13 @@
 
 ## ?.?.? / ????-??-??
 
+## 2.2.1 / 2025-12-13
+
+* Added PHP 8.6, changed PHP 8.5 to no longer allow failures in CI
+  (@thekid)
+* Fixed string representation when using callables inside `Condition`
+  (@thekid)
+
 ## 2.2.0 / 2025-09-06
 
 * Added PHP 8.5 to the test matrix, ensuring forward compatibility
