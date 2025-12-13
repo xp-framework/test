@@ -9,6 +9,7 @@ use test\execution\Context;
  * 
  * - `Condition('self::processExecutionEnabled()')`
  * - `Condition(assert: 'function_exists("bcadd")')`
+ * - `Condition(assert: fn() => PHP_VERSION_ID >= 80500)`
  *
  * @test  test.unittest.ConditionTest
  */
@@ -27,14 +28,17 @@ class Condition implements Verification {
    * @return iterable
    */
   public function assertions(Context $context) {
-    $assertion= $this->assert instanceof Closure
-      ? $this->assert
-      : $context->type->evaluate("fn() => {$this->assert};")
-    ;
+    if ($this->assert instanceof Closure) {
+      $string= '<function()>';
+      $assertion= $this->assert;
+    } else {
+      $string= (string)$this->assert;
+      $assertion= $context->type->evaluate("fn() => {$this->assert};");
+    }
 
     yield new Assertion(
-      $assertion->bindTo($context->instance, $context->type->literal())->__invoke(),
-      new Verify($this->assert)
+      $assertion->bindTo($context->instance, $context->type->literal())(),
+      new Verify($string)
     );
   }
 }

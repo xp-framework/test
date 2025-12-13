@@ -3,7 +3,7 @@
 use lang\Reflection;
 use test\execution\Context;
 use test\verify\Condition;
-use test\{Assert, Test, Values};
+use test\{Assert, Test};
 
 class ConditionTest {
 
@@ -29,11 +29,13 @@ class ConditionTest {
   }
 
   #[Test]
-  public function success() {
-    Assert::that(new Condition('true'))
-      ->mappedBy([$this, 'failures'])
-      ->isNull()
-    ;
+  public function success_string() {
+    Assert::that(new Condition('true'))->mappedBy([$this, 'failures'])->isNull();
+  }
+
+  #[Test]
+  public function success_closure() {
+    Assert::that(new Condition(fn() => true))->mappedBy([$this, 'failures'])->isNull();
   }
 
   #[Test]
@@ -41,6 +43,14 @@ class ConditionTest {
     Assert::that(new Condition('function_exists("false")'))
       ->mappedBy([$this, 'failures'])
       ->isEqualTo('Failed verifying function_exists("false")')
+    ;
+  }
+
+  #[Test]
+  public function failure_includes_assertion_string() {
+    Assert::that(new Condition(fn() => false))
+      ->mappedBy([$this, 'failures'])
+      ->isEqualTo('Failed verifying <function()>')
     ;
   }
 
