@@ -3,6 +3,11 @@
 
 ## ?.?.? / ????-??-??
 
+## 2.2.2 / 2026-08-01
+
+* Added forward-compatible refactoring for xp-framework/core#367
+  (@thekid)
+
 ## 2.2.1 / 2025-12-13
 
 * Added PHP 8.6, changed PHP 8.5 to no longer allow failures in CI

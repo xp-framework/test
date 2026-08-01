@@ -46,7 +46,7 @@ class Runner {
     $name= array_shift($segments);
 
     $class= XPClass::forName(strpos($name, '.') ? $name : 'xp.test.'.$name);
-    if ($class->isSubclassOf(Report::class)) return $class->newInstance(...$segments);
+    if (is_subclass_of($class->literal(), Report::class)) return $class->newInstance(...$segments);
 
     throw new IllegalArgumentException('Class '.$class.' cannot be used as a report');
   }
